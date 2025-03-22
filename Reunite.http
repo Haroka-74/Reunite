@@ -1,0 +1,6 @@
+@Reunite_HostAddress = http://localhost:5096
+
+GET {{Reunite_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
