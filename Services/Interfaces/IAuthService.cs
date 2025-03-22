@@ -1,10 +1,11 @@
-﻿using Reunite.DTOs.AuthDTOs;
+﻿using Reunite.Domain;
+using Reunite.DTOs.AuthDTOs;
 
 namespace Reunite.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<string> RegisterAsync(RegisterDTO registerDTO);
-        Task<string> LoginAsync(LoginDTO loginDTO);
+        Task<bool> RegisterAsync(RegisterDTO registerDTO);
+        Task<LoginResponse> LoginAsync(LoginDTO loginDTO);
     }
 }

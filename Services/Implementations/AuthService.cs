@@ -1,5 +1,8 @@
-﻿using Reunite.DTOs.AuthDTOs;
+﻿using Microsoft.AspNetCore.Identity.Data;
+using Reunite.Domain;
+using Reunite.DTOs.AuthDTOs;
 using Reunite.Services.Interfaces;
+using System.Text.Json;
 
 namespace Reunite.Services.Implementations
 {
@@ -15,7 +18,7 @@ namespace Reunite.Services.Implementations
             this.configuration = configuration;
         }
 
-        public async Task<string> RegisterAsync(RegisterDTO registerDTO)
+        public async Task<bool> RegisterAsync(RegisterDTO registerDTO)
         {
             var payload = new
             {
@@ -34,15 +37,32 @@ namespace Reunite.Services.Implementations
 
             var response = await httpClient.PostAsJsonAsync(URL, payload);
 
-            if (!response.IsSuccessStatusCode)
-                return $"Registration failed: {await response.Content.ReadAsStringAsync()}";
-
-            return $"Registration successful: {await response.Content.ReadAsStringAsync()}";
+            return response.IsSuccessStatusCode;
         }
 
-        public Task<string> LoginAsync(LoginDTO loginDTO)
+        public async Task<LoginResponse> LoginAsync(LoginDTO loginDTO)
         {
-            throw new NotImplementedException();
+            var payload = new
+            {
+                client_id = configuration["Auth0:ClientId"],
+                connection = configuration["Auth0:Connection"],
+                client_secret = configuration["Auth0:ClientSecret"],
+                audience = configuration["Auth0:Audience"],
+                grant_type = "password",
+                username = loginDTO.Username,
+                password = loginDTO.Password,
+                scope = "openid profile email"
+            };
+            
+            string URL = $"https://{configuration["Auth0:Domain"]}/oauth/token";
+
+            var response = await httpClient.PostAsJsonAsync(URL, payload);
+
+            var content = await response.Content.ReadAsStringAsync();
+            
+            var json = JsonSerializer.Deserialize<LoginResponse>(content);
+            
+            return json;
         }
 
     }

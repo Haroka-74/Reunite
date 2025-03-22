@@ -21,7 +21,24 @@ namespace Reunite.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            return Ok(await service.RegisterAsync(registerDTO));
+
+            var result = await service.RegisterAsync(registerDTO);
+
+            return (result) ? Ok("Registration successful.") : BadRequest("Registration failed.");
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginDTO loginDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var response = await service.LoginAsync(loginDTO);
+
+            if (response.AccessToken is null)
+                return Unauthorized("Invalid credentials or authentication failed.");
+
+            return Ok(response);
         }
 
     }
