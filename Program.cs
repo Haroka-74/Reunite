@@ -25,9 +25,6 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 
-
-
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

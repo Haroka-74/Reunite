@@ -24,7 +24,10 @@ namespace Reunite.Controllers
 
             var result = await service.RegisterAsync(registerDTO);
 
-            return (result) ? Ok("Registration successful.") : BadRequest("Registration failed.");
+            if (!result.IsAuthenticated)
+                return BadRequest(result.Message);
+
+            return Ok(result.Message);
         }
 
         [HttpPost("login")]
@@ -33,12 +36,40 @@ namespace Reunite.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var response = await service.LoginAsync(loginDTO);
+            var result = await service.LoginAsync(loginDTO);
 
-            if (response.AccessToken is null)
-                return Unauthorized("Invalid credentials or authentication failed.");
+            if (!result.IsAuthenticated)
+                return BadRequest(result.Message);
 
-            return Ok(response);
+            return Ok(result);
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh(RefreshTokenDTO refreshTokenDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await service.RefreshTokenAsync(refreshTokenDTO);
+
+            if (!result.IsAuthenticated)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+        }
+
+        [HttpPost("revoke")]
+        public async Task<IActionResult> Revoke(RefreshTokenDTO refreshTokenDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await service.RevokeTokenAsync(refreshTokenDTO);
+
+            if (!result)
+                return BadRequest("Token could not be revoked.");
+
+            return Ok("Token revoked successfully.");
         }
 
     }
