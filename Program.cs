@@ -3,9 +3,14 @@ using Microsoft.IdentityModel.Tokens;
 using Reunite.Services.Implementations;
 using Reunite.Services.Interfaces;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using Reunite.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddDbContext<ReuniteDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
+});
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

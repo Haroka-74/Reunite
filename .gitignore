@@ -10,9 +10,6 @@ obj/
 appsettings.json
 secrets.json
 
-# Ignore Entity Framework Migrations history
-Migrations/
-
 # Ignore logs and database files
 *.log
 *.db
@@ -33,5 +30,4 @@ wwwroot/
 # Ignore dependency cache
 node_modules/
 packages/
-Properties/launchSettings.json
 .vs/
