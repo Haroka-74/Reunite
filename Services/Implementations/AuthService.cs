@@ -8,7 +8,6 @@ namespace Reunite.Services.Implementations
 {
     public class AuthService : IAuthService
     {
-
         private readonly HttpClient httpClient;
         private readonly IConfiguration configuration;
 
@@ -46,11 +45,8 @@ namespace Reunite.Services.Implementations
                 {
                     Email = registerDTO.Email,
                     IsAuthenticated = false,
-                    Message = registerErrorResponse.Description,
+                    Message = registerErrorResponse.Code,
                     StatusCode = registerErrorResponse.StatusCode,
-                    AccessToken = null,
-                    AccessTokenExpiration = null,
-                    RefreshToken = null
                 };
             }
 
@@ -59,120 +55,39 @@ namespace Reunite.Services.Implementations
                 Email = registerDTO.Email,
                 IsAuthenticated = true,
                 Message = "User registered successfully.",
-                StatusCode = (int) response.StatusCode,
-                AccessToken = null,
-                AccessTokenExpiration = null,
-                RefreshToken = null
+                StatusCode = (int)response.StatusCode,
             };
         }
 
-        public async Task<AuthModel> LoginAsync(LoginDTO loginDTO)
+        public async Task<AuthModel> ForgetPasswordAsync(ForgetPasswordDTO forgetPasswordDTO)
         {
             var payload = new
             {
                 client_id = configuration["Auth0:ClientId"],
                 connection = configuration["Auth0:Connection"],
-                client_secret = configuration["Auth0:ClientSecret"],
-                audience = configuration["Auth0:Audience"],
-                grant_type = "password",
-                username = loginDTO.Email,
-                password = loginDTO.Password,
-                scope = configuration["Auth0:LoginScope"]
+                email = forgetPasswordDTO.Email,
             };
-
-            string URL = $"https://{configuration["Auth0:Domain"]}/oauth/token";
+            string URL = $"https://{configuration["Auth0:Domain"]}/dbconnections/change_password";
 
             var response = await httpClient.PostAsJsonAsync(URL, payload);
-
             var content = await response.Content.ReadAsStringAsync();
-
             if (!response.IsSuccessStatusCode)
             {
-                var loginErrorResponse = JsonSerializer.Deserialize<LoginErrorResponse>(content);
                 return new AuthModel
                 {
-                    Email = loginDTO.Email,
+                    Email = forgetPasswordDTO.Email,
                     IsAuthenticated = false,
-                    Message = loginErrorResponse.ErrorDescription,
-                    StatusCode = (int) response.StatusCode,
-                    AccessToken = null,
-                    AccessTokenExpiration = null,
-                    RefreshToken = null
-                };
-            }
-
-            var loginSuccessResponse = JsonSerializer.Deserialize<LoginSuccessResponse>(content);
-
-            return new AuthModel
-            {
-                Email = loginDTO.Email,
-                IsAuthenticated = true,
-                Message = "User logged in successfully.",
-                StatusCode = (int) response.StatusCode,
-                AccessToken = loginSuccessResponse.AccessToken,
-                AccessTokenExpiration = DateTime.UtcNow.AddSeconds(loginSuccessResponse.ExpiresIn),
-                RefreshToken = loginSuccessResponse.RefreshToken
-            };
-        }
-
-        public async Task<AuthModel> RefreshTokenAsync(RefreshTokenDTO refreshTokenDTO)
-        {
-            var payload = new
-            {
-                grant_type = "refresh_token",
-                client_id = configuration["Auth0:ClientId"],
-                client_secret = configuration["Auth0:ClientSecret"],
-                refresh_token = refreshTokenDTO.RefreshToken
-            };
-
-            string URL = $"https://{configuration["Auth0:Domain"]}/oauth/token";
-
-            var response = await httpClient.PostAsJsonAsync(URL, payload);
-
-            var content = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var loginErrorResponse = JsonSerializer.Deserialize<LoginErrorResponse>(content);
-                return new AuthModel
-                {
-                    IsAuthenticated = false,
-                    Message = loginErrorResponse.ErrorDescription,
+                    Message = "Email is required.",
                     StatusCode = (int)response.StatusCode,
-                    AccessToken = null,
-                    AccessTokenExpiration = null,
-                    RefreshToken = null
                 };
             }
-
-            var loginSuccessResponse = JsonSerializer.Deserialize<LoginSuccessResponse>(content);
-
             return new AuthModel
             {
+                Email = forgetPasswordDTO.Email,
                 IsAuthenticated = true,
-                Message = "Token refreshed successfully.",
-                StatusCode = (int) response.StatusCode,
-                AccessToken = loginSuccessResponse.AccessToken,
-                AccessTokenExpiration = DateTime.UtcNow.AddSeconds(loginSuccessResponse.ExpiresIn),
-                RefreshToken = loginSuccessResponse.RefreshToken
+                Message = content,
+                StatusCode = (int)response.StatusCode,
             };
         }
-
-        public async Task<bool> RevokeTokenAsync(RefreshTokenDTO refreshTokenDTO)
-        {
-            var payload = new
-            {
-                client_id = configuration["Auth0:ClientId"],
-                client_secret = configuration["Auth0:ClientSecret"],
-                token = refreshTokenDTO.RefreshToken
-            };
-
-            string URL = $"https://{configuration["Auth0:Domain"]}/oauth/revoke";
-
-            var response = await httpClient.PostAsJsonAsync(URL, payload);
-            
-            return response.IsSuccessStatusCode;
-        }
-
     }
 }

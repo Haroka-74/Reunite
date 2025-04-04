@@ -6,8 +6,5 @@
         public bool IsAuthenticated { get; set; }
         public string Message { get; set; }
         public int StatusCode { get; set; }
-        public string? AccessToken { get; set; }
-        public DateTime? AccessTokenExpiration { get; set; }
-        public string? RefreshToken { get; set; }
     }
 }
