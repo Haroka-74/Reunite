@@ -41,17 +41,23 @@ namespace Reunite.Services.Implementations
 
             if (!response.IsSuccessStatusCode)
             {
-                var registerErrorResponse = JsonSerializer.Deserialize<RegisterErrorResponse>(content);
-                return new AuthModel
+                try
                 {
-                    Email = registerDTO.Email,
-                    IsAuthenticated = false,
-                    Message = registerErrorResponse.Description,
-                    StatusCode = registerErrorResponse.StatusCode,
-                    AccessToken = null,
-                    AccessTokenExpiration = null,
-                    RefreshToken = null
-                };
+                    var registerErrorResponse = JsonSerializer.Deserialize<RegisterErrorResponse>(content);
+                    return new AuthModel
+                    {
+                        Email = registerDTO.Email,
+                        IsAuthenticated = false,
+                        Message = registerErrorResponse.Description,
+                        StatusCode = registerErrorResponse.StatusCode,
+                        AccessToken = null,
+                        AccessTokenExpiration = null,
+                        RefreshToken = null
+                    };
+                } catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
 
             return new AuthModel
