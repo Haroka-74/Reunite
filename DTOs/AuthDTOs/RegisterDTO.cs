@@ -4,7 +4,6 @@ namespace Reunite.DTOs.AuthDTOs
 {
     public class RegisterDTO
     {
-
         [Required(ErrorMessage = "Username is required")]
         [StringLength(50, ErrorMessage = "Username must be at most 50 characters")]
         public string Username { get; set; }
@@ -21,7 +20,10 @@ namespace Reunite.DTOs.AuthDTOs
 
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$",
+            ErrorMessage =
+                "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
         public string Password { get; set; }
-
     }
 }
