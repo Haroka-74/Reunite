@@ -5,6 +5,7 @@ namespace Reunite.Data;
 
 public class ReuniteDbContext :DbContext
 {
+    public DbSet<User> Users { get; set; }
     public DbSet<FoundChild> FoundChilds { get; set; }
     public DbSet<MissedChild> MissedChilds { get; set; }
 
