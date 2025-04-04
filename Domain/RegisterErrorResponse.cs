@@ -11,8 +11,8 @@ namespace Reunite.Domain
         [JsonPropertyName("code")]
         public string Code { get; set; }
 
-        [JsonPropertyName("message")]
-        public string Message { get; set; }
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
 
         [JsonPropertyName("statusCode")]
         public int StatusCode { get; set; }

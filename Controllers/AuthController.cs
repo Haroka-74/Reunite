@@ -29,21 +29,48 @@ namespace Reunite.Controllers
 
             return Ok(result.Message);
         }
-        
-        [HttpPost("forget_password")]
-        public async Task<IActionResult> ForgetPassword(ForgetPasswordDTO forgetPasswordDTO)
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginDTO loginDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await service.ForgetPasswordAsync(forgetPasswordDTO);
+            var result = await service.LoginAsync(loginDTO);
 
             if (!result.IsAuthenticated)
                 return BadRequest(result.Message);
 
-            return Ok(result.Message);
+            return Ok(result);
         }
-        
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh(RefreshTokenDTO refreshTokenDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await service.RefreshTokenAsync(refreshTokenDTO);
+
+            if (!result.IsAuthenticated)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+        }
+
+        [HttpPost("revoke")]
+        public async Task<IActionResult> Revoke(RefreshTokenDTO refreshTokenDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await service.RevokeTokenAsync(refreshTokenDTO);
+
+            if (!result)
+                return BadRequest("Token could not be revoked.");
+
+            return Ok("Token revoked successfully.");
+        }
 
     }
 }

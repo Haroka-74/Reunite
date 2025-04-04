@@ -8,7 +8,11 @@ obj/
 
 # Ignore ASP.NET Core configuration files
 appsettings.json
+appsettings.Development.json
 secrets.json
+
+# Ignore Entity Framework Migrations history
+Migrations/
 
 # Ignore logs and database files
 *.log
@@ -30,4 +34,5 @@ wwwroot/
 # Ignore dependency cache
 node_modules/
 packages/
-.v
+Properties/launchSettings.json
+.vs/
