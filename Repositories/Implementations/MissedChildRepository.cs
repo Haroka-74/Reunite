@@ -10,7 +10,7 @@ namespace Reunite.Repositories.Implementations
     {
         private readonly ReuniteDbContext context;
 
-        MissedChildRepository(ReuniteDbContext context)
+        public MissedChildRepository(ReuniteDbContext context)
         {
             this.context = context;
         }
@@ -22,9 +22,11 @@ namespace Reunite.Repositories.Implementations
 
         }
 
-        public void DeleteMissedChild(string id)
+        public async void DeleteMissedChild(string id)
         {
-            throw new NotImplementedException();
+            MissedChild missedChild = await GetMissedChild(id);
+            context.MissedChilds.Remove(missedChild);
+            await context.SaveChangesAsync();
         }
 
         public async Task<MissedChild> GetMissedChild(string id)

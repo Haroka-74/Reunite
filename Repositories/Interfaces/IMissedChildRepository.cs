@@ -8,7 +8,7 @@ namespace Reunite.Repositories.Interfaces
         Task<MissedChild> GetMissedChild(string id);
         void UpdateMissedChild(MissedChild newChild, string id);
         void DeleteMissedChild(string id);
-        Task<MissedChild> AddMissedChild(MissedChild missedChild, string id);
+        Task<MissedChild> AddMissedChild(MissedChild missedChild);
 
     }
 }

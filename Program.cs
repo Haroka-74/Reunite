@@ -31,6 +31,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 builder.Services.AddHttpClient<IAuthService, AuthService>();
+builder.Services.AddHttpClient<IChildServies, ChildService>();
 builder.Services.AddScoped<IFoundChildRepository, FoundChildRepository>();
 builder.Services.AddScoped<IMissedChildRepository, MissedChildRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();

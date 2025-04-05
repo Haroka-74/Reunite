@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Net.Http.Headers;
+using Reunite.DTOs;
+using Reunite.Services.Interfaces;
 
 namespace Reunite.Controllers
 {
@@ -8,36 +9,24 @@ namespace Reunite.Controllers
     public class ChildController : ControllerBase
     {
 
-        private readonly HttpClient httpClient;
+        private readonly IChildServies childServies;
 
-        public ChildController(HttpClient httpClient)
+        public ChildController(IChildServies childServies)
         {
-            this.httpClient = httpClient;
+            this.childServies = childServies;
         }
 
         [HttpPost("search")]
-        public async Task<IActionResult> Find(IFormFile image, bool fromParent)
+        public async Task<IActionResult> FindNearest(IFormFile formFile, bool fromParent)
         {
-            if (image is null || image.Length == 0)
-                return BadRequest("Image is required.");
+            Console.WriteLine("fdfddf");
+            ChildDTO childDTO = new ChildDTO { Image = formFile, FromParent = fromParent };
 
-            using var content = new MultipartFormDataContent();
 
-            var imageContent = new StreamContent(image.OpenReadStream());
-            imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse(image.ContentType); // send type of the image [ png, ... ].
-            content.Add(imageContent, "file", image.FileName);
+            var response = await childServies.FindNearest(childDTO);
+            if (response.StautsCode == 200) return Ok(response);
 
-            content.Add(new StringContent(fromParent.ToString()), "fromParent");
-
-            var link = "http://127.0.0.1:8000/users/search";
-            var response = await httpClient.PostAsync(link, content);
-
-            if (!response.IsSuccessStatusCode)
-                return BadRequest(response.ToString());
-
-            var zipFile = await response.Content.ReadAsByteArrayAsync();
-
-            return File(zipFile, "application/zip", "result.zip");
+            return StatusCode(404, response);
         }
 
     }
