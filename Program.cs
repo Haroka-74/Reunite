@@ -1,10 +1,12 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Reunite.Data;
+using Reunite.Repositories.Implementations;
+using Reunite.Repositories.Interfaces;
 using Reunite.Services.Implementations;
 using Reunite.Services.Interfaces;
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
-using Reunite.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ReuniteDbContext>(options =>
@@ -29,6 +31,9 @@ builder.Services.AddAuthentication(options =>
     };
 });
 builder.Services.AddHttpClient<IAuthService, AuthService>();
+builder.Services.AddScoped<IFoundChildRepository, FoundChildRepository>();
+builder.Services.AddScoped<IMissedChildRepository, MissedChildRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
