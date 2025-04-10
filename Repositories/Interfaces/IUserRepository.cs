@@ -1,14 +1,13 @@
-﻿using Reunite.Models;
+﻿using Reunite.Models.Auth;
 
 namespace Reunite.Repositories.Interfaces
 {
     public interface IUserRepository
     {
-        Task<List<User>> GetUsers();
-        Task<User> GetUser(string id);
-        void UpdateUser(User newUser, string id);
-        void DeleteUser(string id);
-        Task<User> AddUser(User user);
-
+        Task<List<ReuniteUser>> GetUsers();
+        Task<ReuniteUser> GetUser(string id);
+        Task AddUser(ReuniteUser user);
+        Task UpdateUser(string id, ReuniteUser newUser);
+        Task DeleteUser(string id);
     }
 }

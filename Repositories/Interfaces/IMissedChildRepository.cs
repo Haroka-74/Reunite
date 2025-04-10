@@ -1,4 +1,4 @@
-﻿using Reunite.Models;
+﻿using Reunite.Models.Children;
 
 namespace Reunite.Repositories.Interfaces
 {
@@ -6,9 +6,8 @@ namespace Reunite.Repositories.Interfaces
     {
         Task<List<MissedChild>> GetMissedChilds();
         Task<MissedChild> GetMissedChild(string id);
-        void UpdateMissedChild(MissedChild newChild, string id);
-        void DeleteMissedChild(string id);
-        Task<MissedChild> AddMissedChild(MissedChild missedChild);
-
+        Task AddMissedChild(MissedChild missedChild);
+        Task UpdateMissedChild(string id, MissedChild newChild);
+        Task DeleteMissedChild(string id);
     }
 }
