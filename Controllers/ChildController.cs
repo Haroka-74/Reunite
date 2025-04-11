@@ -17,15 +17,17 @@ namespace Reunite.Controllers
         }
 
         [HttpPost("search")]
-        public async Task<IActionResult> FindNearest(IFormFile formFile, bool fromParent)
+        public async Task<IActionResult> FindNearest(IFormFile image, bool isParent)
         {
-            Console.WriteLine("fdfddf");
-            ChildDTO childDTO = new ChildDTO { Image = formFile, FromParent = fromParent };
-
+            ChildDTO childDTO = new ChildDTO
+            {
+                Image = image,
+                IsParent = isParent
+            };
 
             var response = await childServies.FindNearest(childDTO);
-            if (response.StautsCode == 200) return Ok(response);
 
+            if (response.StautsCode == 200) return Ok(response);
             return StatusCode(404, response);
         }
 

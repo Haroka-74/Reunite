@@ -5,7 +5,7 @@ namespace Reunite.Domain
     public class FindNearestErrorResponse
     {
         [JsonPropertyName("detail")]
-        public Detail detail { get; set; }
+        public Detail Detail { get; set; }
 
     }
     public class Detail

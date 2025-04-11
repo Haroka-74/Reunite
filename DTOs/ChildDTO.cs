@@ -2,7 +2,7 @@
 {
     public class ChildDTO
     {
-        public IFormFile Image;
-        public bool FromParent;
+        public IFormFile Image { get; set; }
+        public bool IsParent { get; set; }
     }
 }

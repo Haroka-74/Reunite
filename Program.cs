@@ -7,34 +7,25 @@ using Reunite.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// builder.WebHost.UseUrls("http://*:54622");
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ReuniteDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMissedChildRepository, MissedChildRepository>();
 builder.Services.AddScoped<IFoundChildRepository, FoundChildRepository>();
 builder.Services.AddHttpClient<IChildServies, ChildService>();
-
-
-
-
-
-
-
-
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

@@ -1,0 +1,43 @@
+services:
+  dotnet:
+    container_name: dotnet
+    build:
+      context: .
+      dockerfile: Docker_images/Dockerfile-dotnet
+    ports:
+      - "54622:54622"
+    volumes:
+      - ./:/Reunite
+      - ../images:/face/images
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://*:54622
+    networks:
+      - dot-network
+      - ms-sql
+
+  database:
+    container_name: sql-server
+    build:
+      context: .
+      dockerfile: Docker_images/Dockerfile-mssql-server
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "${SQL_SERVER_PASSWORD}"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-server:/var/opt/mssql
+    networks:
+      - ms-sql
+    env_file:
+      - .env
+
+volumes:
+  mssql-server:
+
+networks:
+  dot-network:
+    driver: bridge
+  ms-sql:
+    driver: bridge

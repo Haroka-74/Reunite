@@ -31,3 +31,5 @@ wwwroot/
 node_modules/
 packages/
 .vs/
+
+.env
