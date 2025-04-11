@@ -19,29 +19,8 @@ namespace Reunite.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDTO registerDTO)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var result = await service.RegisterAsync(registerDTO);
-
-            if (!result.IsAuthenticated)
-                return BadRequest(result.Message);
-
-            return Ok(result.Message);
-        }
-        
-        [HttpPost("forget_password")]
-        public async Task<IActionResult> ForgetPassword(ForgetPasswordDTO forgetPasswordDTO)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var result = await service.ForgetPasswordAsync(forgetPasswordDTO);
-
-            if (!result.IsAuthenticated)
-                return BadRequest(result.Message);
-
-            return Ok(result.Message);
+            await service.RegisterAsync(registerDTO);
+            return Ok(new {Message="User added successfully"});
         }
         
 

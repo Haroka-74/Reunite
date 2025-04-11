@@ -8,8 +8,7 @@ namespace Reunite.Data
     {
 
         public DbSet<ReuniteUser> Users { get; set; }
-        public DbSet<FoundChild> FoundChilds { get; set; }
-        public DbSet<MissedChild> MissedChilds { get; set; }
+        public DbSet<Child> Childs { get; set; }
 
         public ReuniteDbContext(DbContextOptions options) : base(options) {}
 

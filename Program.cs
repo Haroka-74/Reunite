@@ -17,9 +17,8 @@ builder.Services.AddDbContext<ReuniteDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IMissedChildRepository, MissedChildRepository>();
-builder.Services.AddScoped<IFoundChildRepository, FoundChildRepository>();
-builder.Services.AddHttpClient<IChildServies, ChildService>();
+builder.Services.AddScoped<IChildRepository, ChildRepository>();
+builder.Services.AddHttpClient<IChildService, ChildService>();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 
 var app = builder.Build();

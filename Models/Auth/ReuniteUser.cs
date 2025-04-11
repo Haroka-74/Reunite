@@ -7,7 +7,6 @@ namespace Reunite.Models.Auth
         public string Id { get; set; } = null!;
         public string Username { get; set; } = null!;
         public string Email { get; set; } = null!;
-        public ICollection<FoundChild> FoundChilds { get; set; } = [];
-        public ICollection<MissedChild> MissedChilds { get; set; } = [];
+        public ICollection<Child> Childs { get; set; } = [];
     }
 }

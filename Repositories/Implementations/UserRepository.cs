@@ -17,12 +17,12 @@ namespace Reunite.Repositories.Implementations
 
         public async Task<List<ReuniteUser>> GetUsers()
         {
-            return await context.Users.Include(u => u.MissedChilds).Include(u => u.FoundChilds).ToListAsync();
+            return await context.Users.Include(u => u.Childs).ToListAsync();
         }
 
         public async Task<ReuniteUser> GetUser(string id)
         {
-            return await context.Users.Include(u => u.FoundChilds).Include(u => u.MissedChilds).FirstOrDefaultAsync(c => c.Id == id);
+            return await context.Users.Include(u => u.Childs).FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task AddUser(ReuniteUser user)

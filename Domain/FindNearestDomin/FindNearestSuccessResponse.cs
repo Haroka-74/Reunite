@@ -2,12 +2,12 @@
 
 namespace Reunite.Domain
 {
-    public class FindNearestResponse
+    public class FindNearestSuccessResponse
     {
         [JsonPropertyName("_id")]
         public string Id { get; set; }
-        [JsonPropertyName("fromParent")]
-        public string FromParent { get; set; }
+        [JsonPropertyName("isParent")]
+        public bool IsParent { get; set; }
         [JsonPropertyName("date")]
         public string Date { get; set; }
         [JsonPropertyName("image")]

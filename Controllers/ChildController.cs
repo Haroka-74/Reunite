@@ -9,27 +9,21 @@ namespace Reunite.Controllers
     public class ChildController : ControllerBase
     {
 
-        private readonly IChildServies childServies;
+        private readonly IChildService childService;
 
-        public ChildController(IChildServies childServies)
+        public ChildController(IChildService childService)
         {
-            this.childServies = childServies;
+            this.childService = childService;
         }
 
         [HttpPost("search")]
-        public async Task<IActionResult> FindNearest(IFormFile image, bool isParent)
+        public async Task<IActionResult> Search([FromForm]SearchDTO searchDto)
         {
-            ChildDTO childDTO = new ChildDTO
-            {
-                Image = image,
-                IsParent = isParent
-            };
-
-            var response = await childServies.FindNearest(childDTO);
-
-            if (response.StautsCode == 200) return Ok(response);
-            return StatusCode(404, response);
+            var response = await childService.FindNearest(searchDto);
+            if (response.Ok) return Ok(response.Success);
+            await childService.AddChild(searchDto);
+            return NotFound(response.Error);
         }
-
+        
     }
 }

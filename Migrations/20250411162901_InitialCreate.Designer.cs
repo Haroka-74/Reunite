@@ -11,7 +11,7 @@ using Reunite.Data;
 namespace Reunite.Migrations
 {
     [DbContext(typeof(ReuniteDbContext))]
-    [Migration("20250411130817_InitialCreate")]
+    [Migration("20250411162901_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -42,32 +42,12 @@ namespace Reunite.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Reunite.Models.Children.FoundChild", b =>
+            modelBuilder.Entity("Reunite.Models.Children.Child", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("FoundChilds");
-                });
-
-            modelBuilder.Entity("Reunite.Models.Children.MissedChild", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
@@ -78,24 +58,13 @@ namespace Reunite.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("MissedChilds");
+                    b.ToTable("Childs");
                 });
 
-            modelBuilder.Entity("Reunite.Models.Children.FoundChild", b =>
+            modelBuilder.Entity("Reunite.Models.Children.Child", b =>
                 {
                     b.HasOne("Reunite.Models.Auth.ReuniteUser", "User")
-                        .WithMany("FoundChilds")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Reunite.Models.Children.MissedChild", b =>
-                {
-                    b.HasOne("Reunite.Models.Auth.ReuniteUser", "User")
-                        .WithMany("MissedChilds")
+                        .WithMany("Childs")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -105,9 +74,7 @@ namespace Reunite.Migrations
 
             modelBuilder.Entity("Reunite.Models.Auth.ReuniteUser", b =>
                 {
-                    b.Navigation("FoundChilds");
-
-                    b.Navigation("MissedChilds");
+                    b.Navigation("Childs");
                 });
 #pragma warning restore 612, 618
         }

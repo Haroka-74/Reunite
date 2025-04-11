@@ -3,51 +3,68 @@ using System.Text.Json;
 using Reunite.Domain;
 using Reunite.DTOs;
 using Reunite.Models;
+using Reunite.Models.Children;
+using Reunite.Repositories.Interfaces;
 using Reunite.Services.Interfaces;
 
 namespace Reunite.Services.Implementations
 {
-    public class ChildService : IChildServies
+    public class ChildService : IChildService
     {
         private readonly HttpClient httpClient;
-        public ChildService(HttpClient httpClient)
+        private readonly IConfiguration configuration;
+        private readonly IChildRepository childRepository;
+
+        public ChildService(HttpClient httpClient,IConfiguration configuration,IChildRepository childRepository )
         {
             this.httpClient = httpClient;
+            this.configuration = configuration;
+            this.childRepository = childRepository;
         }
-        public async Task<FindNearestModel> FindNearest(ChildDTO childDTO)
+        public async Task<FindNearestResponse> FindNearest(SearchDTO searchDto)
         {
             using var content = new MultipartFormDataContent();
 
-            var imageContent = new StreamContent(childDTO.Image.OpenReadStream());
-            imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse(childDTO.Image.ContentType); // send type of the image [ png, ... ].
-            content.Add(imageContent, "image", childDTO.Image.FileName);
+            var imageContent = new StreamContent(searchDto.Image.OpenReadStream());
+            imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse(searchDto.Image.ContentType);
+            content.Add(imageContent, "image", searchDto.Image.FileName);
 
-            content.Add(new StringContent(childDTO.IsParent.ToString()), "isParent");
+            content.Add(new StringContent(searchDto.IsParent.ToString()), "isParent");
 
-            var response = await httpClient.PostAsync("http://FaceRecognition:54621/childs/search", content);
+            var response = await httpClient.PostAsync($"http://{configuration["AI:IP"]}:{configuration["AI:Port"]}/childs/search", content);
             var responseStringContent = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
             {
-                var ErrorResponse = JsonSerializer.Deserialize<FindNearestErrorResponse>(responseStringContent);
-                return new FindNearestModel
+                var errorResponse = JsonSerializer.Deserialize<FindNearestErrorResponse>(responseStringContent);
+                return new FindNearestResponse
                 {
-                    StautsCode = (int)response.StatusCode
+                    Error = errorResponse
                 };
             }
-            var findNearestResponse = JsonSerializer.Deserialize<FindNearestModel>(responseStringContent);
+            var successResponse = JsonSerializer.Deserialize<FindNearestSuccessResponse>(responseStringContent);
 
-            return new FindNearestModel
+            return new FindNearestResponse
             {
-                Image = findNearestResponse.Image,
-                Id = findNearestResponse.Id,
-                IsParent = findNearestResponse.IsParent,
-                StautsCode = (int)response.StatusCode,
-                Date = findNearestResponse.Date
+               Success = successResponse
             };
 
         }
 
+        public async Task AddChild(SearchDTO searchDto)
+        {
+            using var content = new MultipartFormDataContent();
 
+            var imageContent = new StreamContent(searchDto.Image.OpenReadStream());
+            imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse(searchDto.Image.ContentType);
+            content.Add(imageContent, "image", searchDto.Image.FileName);
+
+            content.Add(new StringContent(searchDto.IsParent.ToString()), "isParent");
+            string ImageId = Guid.NewGuid().ToString();
+            content.Add(new StringContent(ImageId), "id");
+            await httpClient.PostAsync($"http://{configuration["AI:IP"]}:{configuration["AI:Port"]}/childs/", content);
+            await childRepository.AddChild(new Child { UserId = searchDto.UserId,Id = ImageId});
+                
+        }
     }
 }
