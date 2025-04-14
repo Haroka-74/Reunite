@@ -1,9 +1,14 @@
-﻿namespace Reunite.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Reunite.DTOs
 {
     public class SearchDTO
     {
-        public IFormFile Image { get; set; }
+        [Required]
+        public IFormFile Image { get; set; } = null!;
+        [Required]
         public bool IsParent { get; set; }
-        public string UserId { get; set; } 
+        [MaxLength(100)]
+        public string UserId { get; set; } = null!;
     }
 }

@@ -2,7 +2,7 @@
 using System.Text.Json;
 using Reunite.Domain;
 using Reunite.DTOs;
-using Reunite.Models;
+using Reunite.Helpers;
 using Reunite.Models.Children;
 using Reunite.Repositories.Interfaces;
 using Reunite.Services.Interfaces;
@@ -15,7 +15,7 @@ namespace Reunite.Services.Implementations
         private readonly IConfiguration configuration;
         private readonly IChildRepository childRepository;
 
-        public ChildService(HttpClient httpClient,IConfiguration configuration,IChildRepository childRepository )
+        public ChildService(HttpClient httpClient, IConfiguration configuration, IChildRepository childRepository)
         {
             this.httpClient = httpClient;
             this.configuration = configuration;
@@ -23,6 +23,7 @@ namespace Reunite.Services.Implementations
         }
         public async Task<FindNearestResponse> FindNearest(SearchDTO searchDto)
         {
+
             using var content = new MultipartFormDataContent();
 
             var imageContent = new StreamContent(searchDto.Image.OpenReadStream());
@@ -46,25 +47,47 @@ namespace Reunite.Services.Implementations
 
             return new FindNearestResponse
             {
-               Success = successResponse
+                Success = successResponse
             };
 
         }
-
-        public async Task AddChild(SearchDTO searchDto)
+        public async Task AddChildByParent(ParentSearchDTO searchDto)
         {
-            using var content = new MultipartFormDataContent();
+            var imageId = Guid.NewGuid().ToString();
+            await UploadImageToAiService(searchDto.Image, searchDto.IsParent, imageId);
 
-            var imageContent = new StreamContent(searchDto.Image.OpenReadStream());
-            imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse(searchDto.Image.ContentType);
-            content.Add(imageContent, "image", searchDto.Image.FileName);
-
-            content.Add(new StringContent(searchDto.IsParent.ToString()), "isParent");
-            string ImageId = Guid.NewGuid().ToString();
-            content.Add(new StringContent(ImageId), "id");
-            await httpClient.PostAsync($"http://{configuration["AI:IP"]}:{configuration["AI:Port"]}/childs/", content);
-            await childRepository.AddChild(new Child { UserId = searchDto.UserId,Id = ImageId});
-                
+            await childRepository.AddChild(new Child
+            {
+                UserId = searchDto.UserId,
+                Name = searchDto.ChildName,
+                Age = searchDto.ChildAge,
+                Id = imageId
+            });
         }
+
+        public async Task AddChildByFinder(FinderSearchDTO searchDto)
+        {
+            var imageId = Guid.NewGuid().ToString();
+            await UploadImageToAiService(searchDto.Image, searchDto.IsParent, imageId);
+
+            await childRepository.AddChild(new Child
+            {
+                UserId = searchDto.UserId,
+                Id = imageId
+            });
+        }
+
+
+
+        private async Task UploadImageToAiService(IFormFile image, bool isParent, string imageId)
+        {
+            var content = AiServiceHelper.CreateMultipartContent(image, isParent);
+            content.Add(new StringContent(imageId), "id");
+
+            await httpClient.PostAsync(
+                $"http://{configuration["AI:IP"]}:{configuration["AI:Port"]}/childs/",
+                content);
+        }
+
     }
 }

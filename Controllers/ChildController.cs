@@ -6,6 +6,7 @@ namespace Reunite.Controllers
 {
     [Route("api/childs")]
     [ApiController]
+    //[Authorize]
     public class ChildController : ControllerBase
     {
 
@@ -16,14 +17,33 @@ namespace Reunite.Controllers
             this.childService = childService;
         }
 
-        [HttpPost("search")]
-        public async Task<IActionResult> Search([FromForm]SearchDTO searchDto)
+        [HttpPost("p/search")]
+        public async Task<IActionResult> ParentSearch([FromForm] ParentSearchDTO searchDto)
+        {
+            var response = await childService.FindNearest(searchDto);
+
+            if (response.Ok) return Ok(response.Success);
+
+            if (response.Error!.Detail.Name == "No similar images")
+            {
+                await childService.AddChildByParent(searchDto);
+                return Ok(new { Message = "Child added successfully" });
+            }
+            return NotFound(response.Error);
+        }
+
+        [HttpPost("f/search")]
+        public async Task<IActionResult> FinderSearch([FromForm] FinderSearchDTO searchDto)
         {
             var response = await childService.FindNearest(searchDto);
             if (response.Ok) return Ok(response.Success);
-            await childService.AddChild(searchDto);
+            if (response.Error!.Detail.Name == "No similar images")
+            {
+                await childService.AddChildByFinder(searchDto);
+                return Ok(new { Message = "Child added successfully" });
+            }
             return NotFound(response.Error);
         }
-        
+
     }
 }

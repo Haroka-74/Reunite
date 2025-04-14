@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Reunite.Data;
 
@@ -10,9 +11,11 @@ using Reunite.Data;
 namespace Reunite.Migrations
 {
     [DbContext(typeof(ReuniteDbContext))]
-    partial class ReuniteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250414221549_childattributes")]
+    partial class childattributes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
