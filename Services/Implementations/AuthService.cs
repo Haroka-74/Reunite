@@ -1,10 +1,7 @@
-﻿using Reunite.Domain;
-using Reunite.DTOs.AuthDTOs;
+﻿using Reunite.DTOs.AuthDTOs;
 using Reunite.Models.Auth;
-using Reunite.Services.Interfaces;
-using System.Text.Json;
-using Reunite.Repositories.Implementations;
 using Reunite.Repositories.Interfaces;
+using Reunite.Services.Interfaces;
 
 namespace Reunite.Services.Implementations
 {
@@ -20,9 +17,9 @@ namespace Reunite.Services.Implementations
 
         public async Task RegisterAsync(RegisterDTO registerDTO)
         {
-           await repository.AddUser(new ReuniteUser
-                { Id = registerDTO.Auth0Id, Username = registerDTO.Username, Email = registerDTO.Email });
+            await repository.AddUser(new ReuniteUser
+            { Id = registerDTO.Auth0Id, Username = registerDTO.Username, Email = registerDTO.Email });
         }
-        
+
     }
 }
