@@ -7,6 +7,9 @@ namespace Reunite.Domain
         [JsonPropertyName("detail")]
         public Detail Detail { get; set; }
 
+        [JsonIgnore]
+        public int StatusCode { get; set; }
+
     }
     public class Detail
     {

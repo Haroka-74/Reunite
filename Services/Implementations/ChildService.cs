@@ -38,6 +38,7 @@ namespace Reunite.Services.Implementations
             if (!response.IsSuccessStatusCode)
             {
                 var errorResponse = JsonSerializer.Deserialize<FindNearestErrorResponse>(responseStringContent);
+                errorResponse.StatusCode = (int) response.StatusCode;
                 return new FindNearestResponse
                 {
                     Error = errorResponse
