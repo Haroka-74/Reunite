@@ -18,6 +18,8 @@ builder.Services.AddDbContext<ReuniteDbContext>(options =>
 });
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IChildRepository, ChildRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IChatRepository, ChatRepository>();
 builder.Services.AddHttpClient<IChildService, ChildService>();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 
