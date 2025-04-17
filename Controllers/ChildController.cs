@@ -29,7 +29,7 @@ namespace Reunite.Controllers
 
             await childService.AddChildByParent(searchDto);
 
-            return Ok(new { Message = "Child added successfully, wait to antoher person find you child please." });
+            return StatusCode(201, new { Message = "Child added successfully, wait to antoher person find you child please." });
         }
 
         [HttpPost("f/search")]
@@ -43,7 +43,7 @@ namespace Reunite.Controllers
 
             await childService.AddChildByFinder(searchDto);
 
-            return Ok(new { Message = "Thanks for adding the child." });
+            return StatusCode(201, new { Message = "Thanks for adding the child." });
         }
 
     }
