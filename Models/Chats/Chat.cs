@@ -10,7 +10,7 @@ namespace Reunite.Models.Chats
         public ReuniteUser User1 { get; set; } = null!;
         public string UserId2 { get; set; } = null!;
         public ReuniteUser User2 { get; set; } = null!;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public ICollection<Message> Messages { get; set; } = [];
     }
 }
