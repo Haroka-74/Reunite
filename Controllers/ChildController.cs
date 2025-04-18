@@ -7,7 +7,7 @@ namespace Reunite.Controllers
 {
     [Route("api/childs")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ChildController : ControllerBase
     {
 
@@ -23,7 +23,10 @@ namespace Reunite.Controllers
         {
             var response = await childService.FindNearest(searchDto);
 
-            if (response.Ok) return Ok(response.Success);
+            if (response.Ok)
+            {
+                return Ok(response.Success);
+            }
 
             if (response.Error.StatusCode == 400) return BadRequest(response.Error);
 
@@ -37,7 +40,10 @@ namespace Reunite.Controllers
         {
             var response = await childService.FindNearest(searchDto);
 
-            if (response.Ok) return Ok(response.Success);
+            if (response.Ok)
+            {
+                return Ok(response.Success);
+            }
 
             if (response.Error.StatusCode == 400) return BadRequest(response.Error);
 

@@ -14,12 +14,14 @@ namespace Reunite.Services.Implementations
         private readonly HttpClient httpClient;
         private readonly IConfiguration configuration;
         private readonly IChildRepository childRepository;
+        private readonly IChatService chatService;
 
-        public ChildService(HttpClient httpClient, IConfiguration configuration, IChildRepository childRepository)
+        public ChildService(HttpClient httpClient, IConfiguration configuration, IChildRepository childRepository, IChatService chatService)
         {
             this.httpClient = httpClient;
             this.configuration = configuration;
             this.childRepository = childRepository;
+            this.chatService = chatService;
         }
         public async Task<FindNearestResponse> FindNearest(SearchDTO searchDto)
         {
@@ -45,6 +47,11 @@ namespace Reunite.Services.Implementations
                 };
             }
             var successResponse = JsonSerializer.Deserialize<FindNearestSuccessResponse>(responseStringContent);
+
+            var query = await childRepository.GetChild(successResponse!.Id);
+            successResponse.ReceiverId = query.User.Id;
+            successResponse.ReceiverUsername = query.User.Username;
+            successResponse.ChatId = await chatService.OpenChatBetweenUsersAsync(successResponse.ReceiverId, searchDto.UserId);
 
             return new FindNearestResponse
             {
