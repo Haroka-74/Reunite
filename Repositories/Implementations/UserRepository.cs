@@ -36,6 +36,7 @@ namespace Reunite.Repositories.Implementations
             var user = await GetUser(id);
             user.Username = newUser.Username;
             user.Email = newUser.Email;
+            await context.SaveChangesAsync();
         }
 
         public async Task DeleteUser(string id)

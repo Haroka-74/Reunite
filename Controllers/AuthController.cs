@@ -22,7 +22,13 @@ namespace Reunite.Controllers
             await service.RegisterAsync(registerDTO);
             return Ok(new {Message="User added successfully"});
         }
-        
+
+        [HttpPut("update")]
+        public async Task<IActionResult> Update(UpdateDTO updateDTO)
+        {
+            await service.UpdateAsync(updateDTO);
+            return Ok(new { Message = "User updated successfully." });
+        }       
 
     }
 }
