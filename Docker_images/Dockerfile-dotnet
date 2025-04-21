@@ -19,6 +19,6 @@ RUN dotnet tool install --global dotnet-ef
 
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENV ASPNETCORE_URLS=http://*:54622
-EXPOSE 54622
+ENV ASPNETCORE_URLS=http://*:5000
+EXPOSE 5000
 ENTRYPOINT ["dotnet", "Reunite.dll"]

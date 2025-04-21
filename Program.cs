@@ -71,6 +71,17 @@ builder.Services.AddDbContext<ReuniteDbContext>(options =>
 
 builder.Services.AddSignalR();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 // Repositories & Services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IChildRepository, ChildRepository>();
@@ -91,6 +102,8 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Reunite API v1");
     c.RoutePrefix = "swagger"; // Swagger at /swagger
 });
+
+app.UseCors("AllowAllOrigins");
 
 app.UseHttpsRedirection();
 

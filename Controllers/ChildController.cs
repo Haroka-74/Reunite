@@ -62,7 +62,7 @@ namespace Reunite.Controllers
             string postUrl= $"https://www.facebook.com/{pageId}/posts/{postId}";
 
 
-            return StatusCode(201, new { Message = $"Thanks for adding the child. and facebook link id is {postUrl}" });
+            return StatusCode(201, new { postUrl });
         }
 
     }
