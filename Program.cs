@@ -45,7 +45,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter ‘Bearer’ [space] and then your valid JWT token."
+        Description = "Enter â€˜Bearerâ€™ [space] and then your valid JWT token."
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -80,6 +80,7 @@ builder.Services.AddHttpClient<IChildService, ChildService>();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFacebookService, FacebookService>();
 
 var app = builder.Build();
 
