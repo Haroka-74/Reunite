@@ -92,6 +92,7 @@ builder.Services.AddHttpClient<IAuthService, AuthService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFacebookService, FacebookService>();
+builder.Services.AddScoped<IDonationService, DonationService>();
 
 var app = builder.Build();
 
