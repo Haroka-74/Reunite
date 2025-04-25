@@ -40,7 +40,7 @@ namespace Reunite.Services.Implementations
             if (!response.IsSuccessStatusCode)
             {
                 var errorResponse = JsonSerializer.Deserialize<FindNearestErrorResponse>(responseStringContent);
-                errorResponse.StatusCode = (int) response.StatusCode;
+                errorResponse.StatusCode = (int)response.StatusCode;
                 return new FindNearestResponse
                 {
                     Error = errorResponse
@@ -51,6 +51,7 @@ namespace Reunite.Services.Implementations
             var query = await childRepository.GetChild(successResponse!.Id);
             successResponse.ReceiverId = query.User.Id;
             successResponse.ReceiverUsername = query.User.Username;
+            successResponse.Location = query.Location!;
             successResponse.ChatId = await chatService.OpenChatBetweenUsersAsync(successResponse.ReceiverId, searchDto.UserId);
 
             return new FindNearestResponse
@@ -81,7 +82,8 @@ namespace Reunite.Services.Implementations
             await childRepository.AddChild(new Child
             {
                 UserId = searchDto.UserId,
-                Id = imageId
+                Id = imageId,
+                Location = searchDto.Location
             });
         }
 

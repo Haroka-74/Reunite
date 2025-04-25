@@ -22,7 +22,7 @@ namespace Reunite.Repositories.Implementations
 
         public async Task<Child> GetChild(string id)
         {
-            return await context.Childs.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
+            return await context.Childs.Include(c => c.User).Include(c => c.Location).FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task AddChild(Child foundChild)
