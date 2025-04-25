@@ -7,7 +7,7 @@ namespace Reunite.Controllers
 {
     [Route("api/childs")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class ChildController : ControllerBase
     {
 
@@ -39,7 +39,7 @@ namespace Reunite.Controllers
             string postId = parts[1];
             string postUrl= $"https://www.facebook.com/{pageId}/posts/{postId}";
 
-            return StatusCode(201, new { Message = $"Child added successfully, wait to antoher person find you child please. and facebook link id is {postUrl}" });
+            return StatusCode(201, new { Message = "Child added successfully, wait to antoher person find you child please.",  postUrl});
         }
 
         [HttpPost("f/search")]
@@ -62,7 +62,7 @@ namespace Reunite.Controllers
             string postUrl= $"https://www.facebook.com/{pageId}/posts/{postId}";
 
 
-            return StatusCode(201, new { postUrl });
+            return StatusCode(201, new { Message = "Child added successfully, wait to antoher person find you child please.", postUrl });
         }
 
     }

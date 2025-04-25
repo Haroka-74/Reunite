@@ -37,7 +37,7 @@ namespace Reunite.Services.Implementations
                             {
                                 Name = "Help Reunite Lost Children",
                                 Description = "Your donation helps bring missing children back to their families",
-                                Images = new List<string> { "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc575FoO_KU0PbJehAgAF2bjTPGwhgQFh_BkYmae3BnqQ71bsyEGWQHzcuUb5jGglmzkk&usqp=CAU" }
+                                Images = new List<string> { "https://drive.google.com/uc?export=view&id=1eNn53lJkXQVIACv8FMwFTH2gNdkmnhWb" }
                             },
                             UnitAmount = amount,
                         },
@@ -45,18 +45,13 @@ namespace Reunite.Services.Implementations
                     },
                 },
                 Mode = "payment",
-                SuccessUrl = "https://yourdomain.com/donation-success?session_id={CHECKOUT_SESSION_ID}",
-                CancelUrl = "https://yourdomain.com/donation-canceled",
+                SuccessUrl = "https://reunitech.me/donation?status=success",
+                CancelUrl = "https://reunitech.me/donation?status=cancel",
                 SubmitType = "donate",
                 PaymentIntentData = new SessionPaymentIntentDataOptions
                 {
                     Description = $"Donation to Reunite - {donationDTO.Email}",
                 },
-                BillingAddressCollection = "required",
-                PhoneNumberCollection = new SessionPhoneNumberCollectionOptions
-                {
-                    Enabled = true
-                }
             };
 
             var service = new SessionService();
