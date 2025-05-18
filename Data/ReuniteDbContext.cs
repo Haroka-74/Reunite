@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Reunite.Models.Auth;
-using Reunite.Models.Chats;
-using Reunite.Models.Children;
+using Reunite.Models;
 
 namespace Reunite.Data
 {
@@ -9,7 +7,7 @@ namespace Reunite.Data
     {
 
         public DbSet<ReuniteUser> Users { get; set; }
-        public DbSet<Child> Childs { get; set; }
+        public DbSet<Query> Queries { get; set; }
         public DbSet<Chat> Chats { get; set; }
         public DbSet<Message> Messages { get; set; }
 

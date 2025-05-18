@@ -1,7 +1,4 @@
-﻿
-using Reunite.Models.Auth;
-
-namespace Reunite.Models.Chats
+﻿namespace Reunite.Models
 {
     public class Chat
     {

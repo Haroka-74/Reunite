@@ -3,7 +3,7 @@ using System.Text.Json;
 using Reunite.Domain;
 using Reunite.DTOs;
 using Reunite.Helpers;
-using Reunite.Models.Children;
+using Reunite.Models;
 using Reunite.Repositories.Interfaces;
 using Reunite.Services.Interfaces;
 
@@ -13,10 +13,10 @@ namespace Reunite.Services.Implementations
     {
         private readonly HttpClient httpClient;
         private readonly IConfiguration configuration;
-        private readonly IChildRepository childRepository;
+        private readonly IQueryRepository childRepository;
         private readonly IChatService chatService;
 
-        public ChildService(HttpClient httpClient, IConfiguration configuration, IChildRepository childRepository, IChatService chatService)
+        public ChildService(HttpClient httpClient, IConfiguration configuration, IQueryRepository childRepository, IChatService chatService)
         {
             this.httpClient = httpClient;
             this.configuration = configuration;
@@ -48,7 +48,7 @@ namespace Reunite.Services.Implementations
             }
             var successResponse = JsonSerializer.Deserialize<FindNearestSuccessResponse>(responseStringContent);
 
-            var query = await childRepository.GetChild(successResponse!.Id);
+            var query = await childRepository.GetQueryAsync(successResponse!.Id);
             successResponse.ReceiverId = query.User.Id;
             successResponse.ReceiverUsername = query.User.Username;
             successResponse.Location = query.Location!;
@@ -65,7 +65,7 @@ namespace Reunite.Services.Implementations
             var imageId = Guid.NewGuid().ToString();
             await UploadImageToAiService(searchDto.Image, searchDto.IsParent, imageId);
 
-            await childRepository.AddChild(new Child
+            await childRepository.AddQueryAsync(new Query
             {
                 UserId = searchDto.UserId,
                 Name = searchDto.ChildName,
@@ -79,7 +79,7 @@ namespace Reunite.Services.Implementations
             var imageId = Guid.NewGuid().ToString();
             await UploadImageToAiService(searchDto.Image, searchDto.IsParent, imageId);
 
-            await childRepository.AddChild(new Child
+            await childRepository.AddQueryAsync(new Query
             {
                 UserId = searchDto.UserId,
                 Id = imageId,

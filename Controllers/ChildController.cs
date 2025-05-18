@@ -5,7 +5,7 @@ using Reunite.Services.Interfaces;
 
 namespace Reunite.Controllers
 {
-    [Route("api/childs")]
+    [Route("api/childs")]// change to Query
     [ApiController]
     [Authorize]
     public class ChildController : ControllerBase

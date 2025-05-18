@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using Reunite.DTOs;
+using Reunite.Models;
 
 namespace Reunite.Domain
 {
@@ -16,6 +16,6 @@ namespace Reunite.Domain
         public string ChatId { get; set; } = null!;
         public string ReceiverId { get; set; } = null!;
         public string ReceiverUsername { get; set; } = null!;
-        public LocationAxis Location { get; set; } = null!;
+        public Location Location { get; set; } = null!;
     }
 }

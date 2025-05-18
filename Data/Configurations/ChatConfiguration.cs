@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Reunite.Models.Chats;
+using Reunite.Models;
 
 namespace Reunite.Data.Configurations
 {

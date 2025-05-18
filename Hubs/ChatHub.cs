@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Reunite.Models.Chats;
+using Reunite.Models;
 using Reunite.Repositories.Interfaces;
 
 namespace Reunite.Hubs

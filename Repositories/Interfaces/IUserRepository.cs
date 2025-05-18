@@ -1,4 +1,4 @@
-﻿using Reunite.Models.Auth;
+﻿using Reunite.Models;
 
 namespace Reunite.Repositories.Interfaces
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Reunite.Data;
-using Reunite.Models.Auth;
+using Reunite.Models;
 using Reunite.Repositories.Interfaces;
 
 namespace Reunite.Repositories.Implementations
@@ -17,12 +17,12 @@ namespace Reunite.Repositories.Implementations
 
         public async Task<List<ReuniteUser>> GetUsers()
         {
-            return await context.Users.Include(u => u.Childs).ToListAsync();
+            return await context.Users.Include(u => u.Queries).ToListAsync();
         }
 
         public async Task<ReuniteUser> GetUser(string id)
         {
-            return await context.Users.Include(u => u.Childs).FirstOrDefaultAsync(c => c.Id == id);
+            return await context.Users.Include(u => u.Queries).FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task AddUser(ReuniteUser user)

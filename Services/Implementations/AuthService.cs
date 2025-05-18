@@ -1,10 +1,9 @@
-﻿using Reunite.Domain;
+﻿using System.Net.Http.Headers;
+using System.Text.Json;
 using Reunite.DTOs.AuthDTOs;
-using Reunite.Models.Auth;
+using Reunite.Models;
 using Reunite.Repositories.Interfaces;
 using Reunite.Services.Interfaces;
-using System.Net.Http.Headers;
-using System.Text.Json;
 
 namespace Reunite.Services.Implementations
 {
@@ -54,7 +53,8 @@ namespace Reunite.Services.Implementations
             {
                 name = updateDTO.Name,
                 email = updateDTO.Email,
-                user_metadata = new {
+                user_metadata = new
+                {
                     phone_number = updateDTO.PhoneNumber
                 }
             };

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Reunite.Models.Auth;
+using Reunite.Models;
 
 namespace Reunite.Data.Configurations
 {
@@ -9,7 +9,7 @@ namespace Reunite.Data.Configurations
 
         public void Configure(EntityTypeBuilder<ReuniteUser> builder)
         {
-            builder.HasMany(c => c.Childs).WithOne(p => p.User).HasForeignKey(p => p.UserId).IsRequired();
+            builder.HasMany(c => c.Queries).WithOne(p => p.User).HasForeignKey(p => p.UserId).IsRequired();
         }
 
     }

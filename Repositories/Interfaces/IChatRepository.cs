@@ -1,4 +1,4 @@
-﻿using Reunite.Models.Chats;
+﻿using Reunite.Models;
 
 namespace Reunite.Repositories.Interfaces
 {

@@ -12,8 +12,8 @@ using Reunite.Data;
 namespace Reunite.Migrations
 {
     [DbContext(typeof(ReuniteDbContext))]
-    [Migration("20250417194233_check")]
-    partial class check
+    [Migration("20250518154646_dbrefactor")]
+    partial class dbrefactor
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,25 +25,7 @@ namespace Reunite.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Reunite.Models.Auth.ReuniteUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Reunite.Models.Chats.Chat", b =>
+            modelBuilder.Entity("Reunite.Models.Chat", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -68,7 +50,51 @@ namespace Reunite.Migrations
                     b.ToTable("Chats");
                 });
 
-            modelBuilder.Entity("Reunite.Models.Chats.Message", b =>
+            modelBuilder.Entity("Reunite.Models.FacebookPost", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Link")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QueryId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QueryId")
+                        .IsUnique();
+
+                    b.ToTable("FacebookPost");
+                });
+
+            modelBuilder.Entity("Reunite.Models.Location", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("QueryId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QueryId")
+                        .IsUnique();
+
+                    b.ToTable("Location");
+                });
+
+            modelBuilder.Entity("Reunite.Models.Message", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -100,7 +126,7 @@ namespace Reunite.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("Reunite.Models.Children.Child", b =>
+            modelBuilder.Entity("Reunite.Models.Query", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -115,22 +141,43 @@ namespace Reunite.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<bool>("isParent")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Childs");
+                    b.ToTable("Queries");
                 });
 
-            modelBuilder.Entity("Reunite.Models.Chats.Chat", b =>
+            modelBuilder.Entity("Reunite.Models.ReuniteUser", b =>
                 {
-                    b.HasOne("Reunite.Models.Auth.ReuniteUser", "User1")
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Reunite.Models.Chat", b =>
+                {
+                    b.HasOne("Reunite.Models.ReuniteUser", "User1")
                         .WithMany("SentChats")
                         .HasForeignKey("UserId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Reunite.Models.Auth.ReuniteUser", "User2")
+                    b.HasOne("Reunite.Models.ReuniteUser", "User2")
                         .WithMany("ReceivedChats")
                         .HasForeignKey("UserId2")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -141,15 +188,37 @@ namespace Reunite.Migrations
                     b.Navigation("User2");
                 });
 
-            modelBuilder.Entity("Reunite.Models.Chats.Message", b =>
+            modelBuilder.Entity("Reunite.Models.FacebookPost", b =>
                 {
-                    b.HasOne("Reunite.Models.Chats.Chat", "Chat")
+                    b.HasOne("Reunite.Models.Query", "Query")
+                        .WithOne("FacebookPost")
+                        .HasForeignKey("Reunite.Models.FacebookPost", "QueryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Query");
+                });
+
+            modelBuilder.Entity("Reunite.Models.Location", b =>
+                {
+                    b.HasOne("Reunite.Models.Query", "Query")
+                        .WithOne("Location")
+                        .HasForeignKey("Reunite.Models.Location", "QueryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Query");
+                });
+
+            modelBuilder.Entity("Reunite.Models.Message", b =>
+                {
+                    b.HasOne("Reunite.Models.Chat", "Chat")
                         .WithMany("Messages")
                         .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Reunite.Models.Auth.ReuniteUser", "Sender")
+                    b.HasOne("Reunite.Models.ReuniteUser", "Sender")
                         .WithMany("SentMessages")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -160,10 +229,10 @@ namespace Reunite.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("Reunite.Models.Children.Child", b =>
+            modelBuilder.Entity("Reunite.Models.Query", b =>
                 {
-                    b.HasOne("Reunite.Models.Auth.ReuniteUser", "User")
-                        .WithMany("Childs")
+                    b.HasOne("Reunite.Models.ReuniteUser", "User")
+                        .WithMany("Queries")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -171,20 +240,28 @@ namespace Reunite.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Reunite.Models.Auth.ReuniteUser", b =>
+            modelBuilder.Entity("Reunite.Models.Chat", b =>
                 {
-                    b.Navigation("Childs");
+                    b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("Reunite.Models.Query", b =>
+                {
+                    b.Navigation("FacebookPost")
+                        .IsRequired();
+
+                    b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("Reunite.Models.ReuniteUser", b =>
+                {
+                    b.Navigation("Queries");
 
                     b.Navigation("ReceivedChats");
 
                     b.Navigation("SentChats");
 
                     b.Navigation("SentMessages");
-                });
-
-            modelBuilder.Entity("Reunite.Models.Chats.Chat", b =>
-                {
-                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

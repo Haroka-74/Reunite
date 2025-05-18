@@ -84,7 +84,7 @@ builder.Services.AddCors(options =>
 
 // Repositories & Services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IChildRepository, ChildRepository>();
+builder.Services.AddScoped<IQueryRepository, QueryRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IChatRepository, ChatRepository>();
 builder.Services.AddHttpClient<IChildService, ChildService>();

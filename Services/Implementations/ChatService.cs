@@ -1,5 +1,5 @@
 ﻿using Reunite.DTOs.ChatDTOs;
-using Reunite.Models.Chats;
+using Reunite.Models;
 using Reunite.Repositories.Interfaces;
 using Reunite.Services.Interfaces;
 

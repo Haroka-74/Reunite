@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Reunite.Data;
-using Reunite.Models.Chats;
+using Reunite.Models;
 using Reunite.Repositories.Interfaces;
 
 namespace Reunite.Repositories.Implementations
