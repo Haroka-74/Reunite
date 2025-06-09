@@ -6,29 +6,24 @@ namespace Reunite.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController(IAuthService service) : ControllerBase
     {
 
-        private readonly IAuthService service;
-
-        public AuthController(IAuthService service)
-        {
-            this.service = service;
-        }
+        private readonly IAuthService service = service;
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDTO registerDTO)
         {
             await service.RegisterAsync(registerDTO);
-            return Ok(new {Message="User added successfully"});
+            return Ok(new { Message = "User added successfully" });
         }
 
         [HttpPut("update")]
         public async Task<IActionResult> Update(UpdateDTO updateDTO)
         {
             await service.UpdateAsync(updateDTO);
-            return Ok(new { Message = "User updated successfully." });
-        }       
+            return Ok(new { Message = "User updated successfully" });
+        }
 
     }
 }

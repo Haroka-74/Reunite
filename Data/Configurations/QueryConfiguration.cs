@@ -6,6 +6,7 @@ namespace Reunite.Data.Configurations
 {
     public class QueryConfiguration : IEntityTypeConfiguration<Query>
     {
+
         public void Configure(EntityTypeBuilder<Query> builder)
         {
             builder.HasOne(c => c.FacebookPost)
@@ -18,5 +19,6 @@ namespace Reunite.Data.Configurations
                 .HasForeignKey<Location>(c => c.QueryId)
                 .IsRequired();
         }
+
     }
 }

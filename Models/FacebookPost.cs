@@ -6,6 +6,5 @@
         public string QueryId { get; set; } = null!;
         public string Link { get; set; } = null!;
         public Query Query { get; set; } = null!;
-
     }
 }

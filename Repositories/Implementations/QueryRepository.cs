@@ -5,55 +5,65 @@ using Reunite.Repositories.Interfaces;
 
 namespace Reunite.Repositories.Implementations
 {
-    public class QueryRepository : IQueryRepository
+    public class QueryRepository(ReuniteDbContext context) : IQueryRepository
     {
 
-        private readonly ReuniteDbContext context;
+        private readonly ReuniteDbContext context = context;
 
-        public QueryRepository(ReuniteDbContext context)
+        public async Task<List<Query>> GetQueriesAsync() => await context.Queries.Include(q => q.Location).Include(q => q.FacebookPost).ToListAsync();
+
+        public async Task<Query?> GetQueryAsync(string id) => await context.Queries.Include(q => q.User).Include(q => q.Location).Include(q => q.FacebookPost).FirstOrDefaultAsync(q => q.Id == id);
+
+        public async Task AddQueryAsync(Query query)
         {
-            this.context = context;
+            context.Queries.Add(query);
+            await SaveChangesAsync();
         }
 
-        public async Task<List<Query>> GetQueriesAsync()
+        public async Task UpdateQueryAsync(string id, Query newQuery)
         {
-            return await context.Queries.Include(c => c.User).ToListAsync();
+            var existingQuery = await GetQueryAsync(id);
+
+            if(existingQuery is null)
+                return;
+
+            if(newQuery.ChildName is not null) existingQuery.ChildName = newQuery.ChildName;
+            if(newQuery.ChildAge is not null) existingQuery.ChildAge = newQuery.ChildAge;
+            if(newQuery.Location is not null)
+            {
+                existingQuery.Location = new Location
+                {
+                    Latitude = newQuery.Location.Latitude,
+                    Longitude = newQuery.Location.Longitude
+                };
+            }
+
+            await SaveChangesAsync();
         }
 
-        public async Task<Query> GetQueryAsync(string id)
+        public async Task<bool> DeleteQueryAsync(string id)
         {
-            return await context.Queries.Include(c => c.User)
-                .Include(c => c.Location)
-                .Include(c => c.FacebookPost)
-                .FirstOrDefaultAsync(c => c.Id == id);
-        }
+            var query = await GetQueryAsync(id);
 
-        public async Task AddQueryAsync(Query foundChild)
-        {
-            await context.Queries.AddAsync(foundChild);
-            await context.SaveChangesAsync();
-        }
+            if (query is null)
+                return false;
 
-        public async Task UpdateQueryAsync(string id, Query newChild)
-        {
-            var child = await GetQueryAsync(id);
-            child.UserId = newChild.UserId;
-            await context.SaveChangesAsync();
-        }
+            context.Queries.Remove(query);
+            await SaveChangesAsync();
 
-        public async Task DeleteQueryAsync(string id)
-        {
-            var child = await GetQueryAsync(id);
-            context.Queries.Remove(child);
-            await context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<List<Query>> GetUserQueriesAsync(string userId)
         {
-            return await context.Queries.Include(c => c.User)
-                .Include(c => c.Location)
-                .Include(c => c.FacebookPost)
-                .Where(c => c.UserId == userId).ToListAsync();
+            return await context.Queries
+                .Include(q => q.Location)
+                .Include(q => q.FacebookPost)
+                .Where(q => q.UserId == userId)
+                .ToListAsync();
         }
+
+        public async Task SaveChangesAsync() => await context.SaveChangesAsync();
+
     }
 }

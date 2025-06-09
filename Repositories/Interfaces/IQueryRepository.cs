@@ -5,10 +5,11 @@ namespace Reunite.Repositories.Interfaces
     public interface IQueryRepository
     {
         Task<List<Query>> GetQueriesAsync();
-        Task<List<Query>> GetUserQueriesAsync(string queryId);
-        Task<Query> GetQueryAsync(string id);
-        Task AddQueryAsync(Query foundChild);
-        Task UpdateQueryAsync(string id, Query newChild);
-        Task DeleteQueryAsync(string id);
+        Task<Query?> GetQueryAsync(string id);
+        Task AddQueryAsync(Query query);
+        Task UpdateQueryAsync(string id, Query query);
+        Task<bool> DeleteQueryAsync(string id);
+        Task<List<Query>> GetUserQueriesAsync(string userId);
+        Task SaveChangesAsync();
     }
 }

@@ -87,12 +87,13 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IQueryRepository, QueryRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IChatRepository, ChatRepository>();
-builder.Services.AddHttpClient<IChildService, ChildService>();
+builder.Services.AddHttpClient<IQueryService, QueryService>();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IFacebookService, FacebookService>();
+//builder.Services.AddScoped<IFacebookService, FacebookService>();
 builder.Services.AddScoped<IDonationService, DonationService>();
+builder.Services.AddScoped<ITokenProviderService, TokenProviderService>();
 
 var app = builder.Build();
 

@@ -12,8 +12,8 @@ using Reunite.Data;
 namespace Reunite.Migrations
 {
     [DbContext(typeof(ReuniteDbContext))]
-    [Migration("20250518154646_dbrefactor")]
-    partial class dbrefactor
+    [Migration("20250609190600_newReunite")]
+    partial class newReunite
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,7 +68,7 @@ namespace Reunite.Migrations
                     b.HasIndex("QueryId")
                         .IsUnique();
 
-                    b.ToTable("FacebookPost");
+                    b.ToTable("FacebookPosts");
                 });
 
             modelBuilder.Entity("Reunite.Models.Location", b =>
@@ -76,10 +76,10 @@ namespace Reunite.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<double?>("Latitude")
+                    b.Property<double>("Latitude")
                         .HasColumnType("float");
 
-                    b.Property<double?>("Longitude")
+                    b.Property<double>("Longitude")
                         .HasColumnType("float");
 
                     b.Property<string>("QueryId")
@@ -91,7 +91,7 @@ namespace Reunite.Migrations
                     b.HasIndex("QueryId")
                         .IsUnique();
 
-                    b.ToTable("Location");
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("Reunite.Models.Message", b =>
@@ -131,18 +131,22 @@ namespace Reunite.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("Age")
+                    b.Property<int?>("ChildAge")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("ChildImage")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChildName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsParent")
+                        .HasColumnType("bit");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("isParent")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

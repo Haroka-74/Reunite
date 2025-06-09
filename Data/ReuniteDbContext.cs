@@ -3,15 +3,15 @@ using Reunite.Models;
 
 namespace Reunite.Data
 {
-    public class ReuniteDbContext : DbContext
+    public class ReuniteDbContext(DbContextOptions options) : DbContext(options)
     {
 
         public DbSet<ReuniteUser> Users { get; set; }
         public DbSet<Query> Queries { get; set; }
         public DbSet<Chat> Chats { get; set; }
         public DbSet<Message> Messages { get; set; }
-
-        public ReuniteDbContext(DbContextOptions options) : base(options) { }
+        public DbSet<FacebookPost> FacebookPosts { get; set; }
+        public DbSet<Location> Locations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Reunite.Migrations
 {
     /// <inheritdoc />
-    public partial class dbrefactor : Migration
+    public partial class newReunite : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -54,10 +55,11 @@ namespace Reunite.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Age = table.Column<int>(type: "int", nullable: true),
-                    isParent = table.Column<bool>(type: "bit", nullable: false)
+                    ChildImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ChildName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ChildAge = table.Column<int>(type: "int", nullable: true),
+                    IsParent = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -99,7 +101,7 @@ namespace Reunite.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FacebookPost",
+                name: "FacebookPosts",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -108,9 +110,9 @@ namespace Reunite.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FacebookPost", x => x.Id);
+                    table.PrimaryKey("PK_FacebookPosts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FacebookPost_Queries_QueryId",
+                        name: "FK_FacebookPosts_Queries_QueryId",
                         column: x => x.QueryId,
                         principalTable: "Queries",
                         principalColumn: "Id",
@@ -118,19 +120,19 @@ namespace Reunite.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Location",
+                name: "Locations",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     QueryId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Latitude = table.Column<double>(type: "float", nullable: true),
-                    Longitude = table.Column<double>(type: "float", nullable: true)
+                    Latitude = table.Column<double>(type: "float", nullable: false),
+                    Longitude = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Location", x => x.Id);
+                    table.PrimaryKey("PK_Locations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Location_Queries_QueryId",
+                        name: "FK_Locations_Queries_QueryId",
                         column: x => x.QueryId,
                         principalTable: "Queries",
                         principalColumn: "Id",
@@ -148,14 +150,14 @@ namespace Reunite.Migrations
                 column: "UserId2");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FacebookPost_QueryId",
-                table: "FacebookPost",
+                name: "IX_FacebookPosts_QueryId",
+                table: "FacebookPosts",
                 column: "QueryId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Location_QueryId",
-                table: "Location",
+                name: "IX_Locations_QueryId",
+                table: "Locations",
                 column: "QueryId",
                 unique: true);
 
@@ -179,10 +181,10 @@ namespace Reunite.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "FacebookPost");
+                name: "FacebookPosts");
 
             migrationBuilder.DropTable(
-                name: "Location");
+                name: "Locations");
 
             migrationBuilder.DropTable(
                 name: "Messages");
