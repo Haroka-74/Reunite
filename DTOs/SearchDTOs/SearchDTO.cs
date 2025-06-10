@@ -1,5 +1,6 @@
 ﻿using Reunite.Annotations;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace Reunite.DTOs.QueryDTOs
 {
@@ -10,9 +11,9 @@ namespace Reunite.DTOs.QueryDTOs
         [MaxFileSize(5 * 1024 * 1024)]
         [AllowedExtensions([".jpg", ".jpeg", ".png"])]
         public IFormFile Image { get; set; } = null!;
-        [Required(ErrorMessage = "IsParent is required")]
-        public bool IsParent { get; set; }
+
         [Required(ErrorMessage = "UserId is required")]
         public string UserId { get; set; } = null!;
+
     }
 }

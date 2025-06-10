@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Reunite.Data;
 
@@ -11,9 +12,11 @@ using Reunite.Data;
 namespace Reunite.Migrations
 {
     [DbContext(typeof(ReuniteDbContext))]
-    partial class ReuniteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250609223036_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,18 +134,8 @@ namespace Reunite.Migrations
                     b.Property<int?>("ChildAge")
                         .HasColumnType("int");
 
-                    b.Property<string>("ChildImage")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ChildName")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsParent")
                         .HasColumnType("bit");

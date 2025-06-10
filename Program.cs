@@ -91,7 +91,8 @@ builder.Services.AddHttpClient<IQueryService, QueryService>();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IUserService, UserService>();
-//builder.Services.AddScoped<IFacebookService, FacebookService>();
+builder.Services.AddScoped<IFacebookService, FacebookService>();
+builder.Services.AddScoped<IFacebookRepository, FacebookRepository>();
 builder.Services.AddScoped<IDonationService, DonationService>();
 builder.Services.AddScoped<ITokenProviderService, TokenProviderService>();
 

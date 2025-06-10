@@ -11,6 +11,7 @@ namespace Reunite.DTOs.QueryDTOs
         public string ChatId { get; set; } = null!;
         public string ReceiverId { get; set; } = null!;
         public string ReceiverUsername { get; set; } = null!;
-        public Location Location { get; set; } = null!;
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }

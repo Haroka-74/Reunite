@@ -1,97 +1,125 @@
 ﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Reunite.DTOs.QueryDTOs;
 using Reunite.Helpers;
 using Reunite.Repositories.Interfaces;
 using Reunite.Services.Interfaces;
 using Reunite.Shared;
+using Reunite.Models;
 
 namespace Reunite.Services.Implementations
 {
-    public class QueryService(HttpClient httpClient, IConfiguration configuration, IQueryRepository queryRepository, IChatService chatService) : IQueryService
+    public class QueryService(
+        HttpClient httpClient,
+        IConfiguration configuration,
+        IQueryRepository queryRepository,
+        IChatService chatService) : IQueryService
     {
-
-        private readonly HttpClient httpClient = httpClient;
-        private readonly IQueryRepository queryRepository = queryRepository;
-        private readonly IChatService chatService = chatService;
-        private readonly IConfiguration configuration = configuration;
-
-        public async Task<Result<FindNearestDTO>> FindNearest(SearchDTO searchDTO)
+        public async Task<Result<FindNearestDTO>> FindNearest(SearchDTO searchDTO, bool isParent)
         {
-            using var content = QueryServiceHelpers.CreateMultipartFormData(searchDTO);
+            using var content = QueryServiceHelpers.CreateMultipartFormData(searchDTO, isParent);
 
             string URL = $"http://{configuration["AI:IP"]}:{configuration["AI:Port"]}/childs/search";
 
             var response = await httpClient.PostAsync(URL, content);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
             if (!response.IsSuccessStatusCode)
                 return Result<FindNearestDTO>.Failure("No similar images", 404);
 
             var json = await response.Content.ReadFromJsonAsync<JsonElement>();
 
             string? id = json.GetProperty("_id").GetString();
-            bool isParent = json.GetProperty("isParent").GetBoolean();
             string? Date = json.GetProperty("date").GetString();
             string? image = json.GetProperty("image").GetString();
 
             var query = await queryRepository.GetQueryAsync(id!);
-            
+
             return Result<FindNearestDTO>.Success(new FindNearestDTO
             {
                 Id = id!,
-                IsParent = isParent,
+                IsParent = !isParent,
                 Date = Date!,
                 Image = image!,
                 ReceiverId = query!.User.Id,
                 ReceiverUsername = query.User.Username,
-                Location = query.Location!,
+                Longitude = query.Location.Longitude!,
+                Latitude = query.Location.Latitude!,
                 ChatId = await chatService.OpenChatBetweenUsersAsync(query!.User.Id, searchDTO.UserId)
             }, 200);
         }
 
 
+        public async Task<QueryDTO> AddQueryByParent(ParentSearchDTO searchDto)
+        {
+            var imageId = Guid.NewGuid().ToString();
+            await UploadImageToAIService(searchDto.Image, true, imageId);
+            var result = await GetImage(imageId);
+
+            var query = await queryRepository.AddQueryAsync(new Query
+            {
+                UserId = searchDto.UserId,
+                ChildName = searchDto.ChildName,
+                ChildAge = searchDto.ChildAge,
+                Id = imageId,
+                ChildImage = result.Data,
+                IsParent = true
+            });
+            return MapToQueryDto(query);
+        }
 
 
+        public async Task<QueryDTO> AddQueryByFinder(FinderSearchDTO searchDto)
+        {
+            var imageId = Guid.NewGuid().ToString();
+            await UploadImageToAIService(searchDto.Image, false, imageId);
+            var result = await GetImage(imageId);
 
+            Location location = new Location()
+                { Id = Guid.NewGuid().ToString(), Latitude = searchDto.Latitude, Longitude = searchDto.Longitude };
 
-        //public async Task AddChildByParent(ParentSearchDTO searchDto)
-        //{
-        //    var imageId = Guid.NewGuid().ToString();
-        //    await UploadImageToAiService(searchDto.Image, searchDto.IsParent, imageId);
+            var query = await queryRepository.AddQueryAsync(new Query
+            {
+                UserId = searchDto.UserId,
+                Id = imageId,
+                Location = location,
+                ChildImage = result.Data,
+                IsParent = false
+            });
+            return MapToQueryDto(query);
+        }
 
-        //    await childRepository.AddQueryAsync(new Query
-        //    {
-        //        UserId = searchDto.UserId,
-        //        Name = searchDto.ChildName,
-        //        Age = searchDto.ChildAge,
-        //        Id = imageId
-        //    });
-        //}
+        private async Task UploadImageToAIService(IFormFile image, bool isParent, string imageId)
+        {
+            var content = AIServiceHelper.CreateMultipartContent(image, isParent);
+            content.Add(new StringContent(imageId), "id");
 
+            await httpClient.PostAsync(
+                $"http://{configuration["AI:IP"]}:{configuration["AI:Port"]}/childs/",
+                content);
+        }
 
+        private async Task<Result<string>> GetImage(string imageId)
+        {
+            string URL = $"http://{configuration["AI:IP"]}:{configuration["AI:Port"]}/childs/{imageId}";
+            var response = await httpClient.GetAsync(URL);
+            if (!response.IsSuccessStatusCode)
+                return Result<string>.Failure("No similar images", 404);
 
-        //public async Task AddChildByFinder(FinderSearchDTO searchDto)
-        //{
-        //    var imageId = Guid.NewGuid().ToString();
-        //    await UploadImageToAiService(searchDto.Image, searchDto.IsParent, imageId);
+            var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+            string? image = json.GetProperty("image").GetString();
+            return Result<string>.Success(image, 200);
+        }
 
-        //    await childRepository.AddQueryAsync(new Query
-        //    {
-        //        UserId = searchDto.UserId,
-        //        Id = imageId,
-        //        Location = searchDto.Location
-        //    });
-        //}
-
-        //private async Task UploadImageToAiService(IFormFile image, bool isParent, string imageId)
-        //{
-        //    var content = AiServiceHelper.CreateMultipartContent(image, isParent);
-        //    content.Add(new StringContent(imageId), "id");
-
-        //    await httpClient.PostAsync(
-        //        $"http://{configuration["AI:IP"]}:{configuration["AI:Port"]}/childs/",
-        //        content);
-        //}
-
+        private QueryDTO MapToQueryDto(Query query)
+        {
+            return new QueryDTO()
+            {
+                ChildImage = query.ChildImage,
+                ChildName = query.ChildName,
+                ChildAge = query.ChildAge,
+                CreatedAt = query.CreatedAt,
+                IsCompleted = query.IsCompleted,
+                Id = query.Id
+            };
+        }
     }
 }

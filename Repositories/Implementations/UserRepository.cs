@@ -8,7 +8,6 @@ namespace Reunite.Repositories.Implementations
     public class UserRepository(ReuniteDbContext context) : IUserRepository
     {
 
-        private readonly ReuniteDbContext context = context;
 
         public async Task<List<ReuniteUser>> GetUsersAsync() => await context.Users.Include(u => u.Queries).ToListAsync();
 

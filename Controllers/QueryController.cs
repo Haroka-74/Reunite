@@ -9,82 +9,42 @@ namespace Reunite.Controllers
 {
     [Route("api/query")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class QueryController : ControllerBase
     {
-
-
-
-
-
-
-
-
-
-
-
         private readonly IQueryService queryService;
-        //private readonly IFacebookService facebookService;
+        private readonly IFacebookService facebookService;
 
-        public QueryController(IQueryService childService/* , IFacebookService facebookService */)
+        public QueryController(IQueryService queryService, IFacebookService facebookService)
         {
-            this.queryService = childService;
-            //this.facebookService = facebookService;
+            this.queryService = queryService;
+            this.facebookService = facebookService;
         }
 
         [HttpPost("p/search")]
         public async Task<IActionResult> ParentSearch([FromForm] ParentSearchDTO searchDto)
         {
-            var result = await queryService.FindNearest(searchDto);
+            var result = await queryService.FindNearest(searchDto, true);
+            QueryDTO query = await queryService.AddQueryByParent(searchDto);
 
             if (result.IsSuccess)
-                return Ok(result.Data);
+                return StatusCode(result.StatusCode, result.Data);
 
 
-
-
-
-
-
-            //await queryService.AddChildByParent(searchDto);
-            //string post = await facebookService.ParentPostToFacebook(searchDto);
-            //var parts = post.Split('_');
-            //string pageId = parts[0];
-            //string postId = parts[1];
-            //string postUrl = $"https://www.facebook.com/{pageId}/posts/{postId}";
-
-            return StatusCode(201, new
-            {
-                Message = "Child added successfully, wait to antoher person find you child please.",
-                //postUrl
-            });
+            string postUrl = await facebookService.ParentPostToFacebook(searchDto,query.Id);
+            return StatusCode(result.StatusCode, new { error = result.Error, postUrl });
         }
 
         [HttpPost("f/search")]
         public async Task<IActionResult> FinderSearch([FromForm] FinderSearchDTO searchDto)
         {
+            var result = await queryService.FindNearest(searchDto, false);
+            QueryDTO query =await queryService.AddQueryByFinder(searchDto);
+            if (result.IsSuccess)
+                return StatusCode(result.StatusCode, result.Data);
 
-            var result = await queryService.FindNearest(searchDto);
-
-            if (!result.IsSuccess)
-                return StatusCode(result.StatusCode, new { error = result.Error });
-
-
-
-            //await queryService.AddChildByFinder(searchDto);
-            //string post = await facebookService.FinderPostToFacebook(searchDto);
-            //var parts = post.Split('_');
-            //string pageId = parts[0];
-            //string postId = parts[1];
-            //string postUrl = $"https://www.facebook.com/{pageId}/posts/{postId}";
-
-
-            return StatusCode(201, new
-            {
-                Message = "Child added successfully, wait to antoher person find you child please.",
-                //postUrl
-            });
+            string postUrl = await facebookService.FinderPostToFacebook(searchDto,query.Id);
+            return StatusCode(result.StatusCode, new { error = result.Error, postUrl });
         }
-
     }
 }

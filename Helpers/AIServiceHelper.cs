@@ -2,7 +2,7 @@
 
 namespace Reunite.Helpers
 {
-    public class AiServiceHelper
+    public class AIServiceHelper
     {
         public static MultipartFormDataContent CreateMultipartContent(IFormFile image, bool isParent)
         {

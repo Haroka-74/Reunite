@@ -1,4 +1,6 @@
-﻿namespace Reunite.Models
+﻿using Newtonsoft.Json;
+
+namespace Reunite.Models
 {
     public class Location
     {
