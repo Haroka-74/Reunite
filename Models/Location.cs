@@ -8,6 +8,6 @@ namespace Reunite.Models
         public string QueryId { get; set; } = null!;
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public Query Query { get; set; } = null!;
+        [JsonIgnore] public Query Query { get; set; } = null!;
     }
 }

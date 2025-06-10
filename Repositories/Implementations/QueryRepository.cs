@@ -20,12 +20,12 @@ namespace Reunite.Repositories.Implementations
             return query;
         }
 
-        public async Task UpdateQueryAsync(string id, Query newQuery)
+        public async Task<Query?> UpdateQueryAsync(string id, Query newQuery)
         {
             var existingQuery = await GetQueryAsync(id);
 
             if (existingQuery is null)
-                return;
+                return null;
 
             if (newQuery.ChildName is not null) existingQuery.ChildName = newQuery.ChildName;
             if (newQuery.ChildAge is not null) existingQuery.ChildAge = newQuery.ChildAge;
@@ -38,8 +38,12 @@ namespace Reunite.Repositories.Implementations
                 };
             }
 
+            existingQuery.IsCompleted = newQuery.IsCompleted;
+
             await SaveChangesAsync();
+            return existingQuery;
         }
+
 
         public async Task<bool> DeleteQueryAsync(string id)
         {
