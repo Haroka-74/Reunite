@@ -8,5 +8,9 @@ public class QueryDTO
     public int? ChildAge { get; set; }
     public bool IsCompleted { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+    public string FacebookLink { get; set; } = null!;
+    
 
 }

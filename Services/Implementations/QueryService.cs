@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
 using Reunite.DTOs.QueryDTOs;
 using Reunite.Helpers;
 using Reunite.Repositories.Interfaces;
@@ -13,7 +12,8 @@ namespace Reunite.Services.Implementations
         HttpClient httpClient,
         IConfiguration configuration,
         IQueryRepository queryRepository,
-        IChatService chatService) : IQueryService
+        IChatService chatService,
+        IUserRepository userRepository) : IQueryService
     {
         public async Task<Result<FindNearestDTO>> FindNearest(SearchDTO searchDTO, bool isParent)
         {
@@ -87,6 +87,40 @@ namespace Reunite.Services.Implementations
             return MapToQueryDto(query);
         }
 
+        public async Task<Result<List<QueryDTO>>> GetUserQueriesAsync(string userId)
+        {
+            if (await userRepository.GetUserAsync(userId) is null)
+            {
+                return Result<List<QueryDTO>>.Failure("User not Found", 404);
+            }
+
+            var userQueries = await queryRepository.GetUserQueriesAsync(userId);
+            var userList = userQueries.Select(q => MapToQueryDto(q)).ToList();
+            return Result<List<QueryDTO>>.Success(userList, 200);
+        }
+
+        public async Task<Result<QueryDTO>> GetQueryAsync(string queryId)
+        {
+            var query = await queryRepository.GetQueryAsync(queryId);
+            if (query is null)
+            {
+                return Result<QueryDTO>.Failure("Query not Found", 404);
+            }
+
+            return Result<QueryDTO>.Success(MapToQueryDto(query), 200);
+        }
+        
+        public async Task<Result<QueryDTO>> ChangeIsCompleted(string queryId)
+        {
+            var query = await queryRepository.UpdateQueryAsync(queryId,new Query(){IsCompleted = true});
+            if (query is null)
+            {
+                return Result<QueryDTO>.Failure("Query not Found", 404);
+            }
+
+            return Result<QueryDTO>.Success(MapToQueryDto(query), 200);
+        }
+
         private async Task UploadImageToAIService(IFormFile image, bool isParent, string imageId)
         {
             var content = AIServiceHelper.CreateMultipartContent(image, isParent);
@@ -114,11 +148,14 @@ namespace Reunite.Services.Implementations
             return new QueryDTO()
             {
                 ChildImage = query.ChildImage,
-                ChildName = query.ChildName,
-                ChildAge = query.ChildAge,
+                ChildName = query?.ChildName ?? "Unknown",
+                ChildAge = query?.ChildAge ?? 0,
                 CreatedAt = query.CreatedAt,
                 IsCompleted = query.IsCompleted,
-                Id = query.Id
+                Id = query.Id,
+                FacebookLink = query.FacebookPost?.Link ?? "No facebook post",
+                Longitude = query.Location?.Longitude ?? 0,
+                Latitude = query.Location?.Latitude ?? 0,
             };
         }
     }
