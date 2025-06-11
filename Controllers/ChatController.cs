@@ -6,17 +6,8 @@ namespace Reunite.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ChatController : ControllerBase
+    public class ChatController(IUserService userService, IChatService chatService) : ControllerBase
     {
-
-        private readonly IUserService userService = null!;
-        private readonly IChatService chatService = null!;
-
-        public ChatController(IUserService userService, IChatService chatService)
-        {
-            this.userService = userService;
-            this.chatService = chatService;
-        }
 
         [HttpPost("user-chats")]
         public async Task<IActionResult> UserChats([FromForm] string userId)

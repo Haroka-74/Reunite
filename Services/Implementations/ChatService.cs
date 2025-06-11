@@ -17,9 +17,7 @@ namespace Reunite.Services.Implementations
 
         public async Task<string> OpenChatBetweenUsersAsync(string userId1, string userId2)
         {
-            var chats = await chatRepository.GetChatsAsync();
-
-            var chat = chats.FirstOrDefault(c => (c.UserId1 == userId1 && c.UserId2 == userId2) || (c.UserId1 == userId2 && c.UserId2 == userId1));
+            var chat = await chatRepository.GetChatAsync(userId1, userId2);
 
             if (chat is null)
             {
@@ -41,12 +39,12 @@ namespace Reunite.Services.Implementations
         public async Task<List<MessageDTO>> GetChatMessages(string chatId)
         {
             var chat = await chatRepository.GetChatAsync(chatId);
-            return chat.Messages.OrderBy(m => m.SentAt).Select(m => new MessageDTO
+            return [.. chat!.Messages.OrderBy(m => m.SentAt).Select(m => new MessageDTO
             {
                 SenderId = m.SenderId,
                 Content = m.Content,
                 SentAt = m.SentAt
-            }).ToList();
+            })];
         }
 
     }

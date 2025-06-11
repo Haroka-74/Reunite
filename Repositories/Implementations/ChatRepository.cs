@@ -2,27 +2,35 @@
 using Reunite.Data;
 using Reunite.Models;
 using Reunite.Repositories.Interfaces;
+using System;
 
 namespace Reunite.Repositories.Implementations
 {
-    public class ChatRepository : IChatRepository
+    public class ChatRepository(ReuniteDbContext context) : IChatRepository
     {
 
-        private readonly ReuniteDbContext context = null!;
-
-        public ChatRepository(ReuniteDbContext context)
+        public async Task<Chat?> GetChatAsync(string userId1, string userId2)
         {
-            this.context = context;
-        }
+            return await context.Chats
+                .Include(c => c.User1)
+                .Include(c => c.User2)
+                .Include(c => c.Messages)
+                .FirstOrDefaultAsync(c => (c.UserId1 == userId1 && c.UserId2 == userId2) || (c.UserId1 == userId2 && c.UserId2 == userId1));
+        }        
 
-        public async Task<List<Chat>> GetChatsAsync()
-        {
-            return await context.Chats.Include(c => c.User1).Include(c => c.User2).Include(c => c.Messages).ToListAsync();
-        }
-
-        public async Task<Chat> GetChatAsync(string chatId)
+        public async Task<Chat?> GetChatAsync(string chatId)
         {
             return await context.Chats.Include(c => c.User1).Include(c => c.User2).Include(c => c.Messages).FirstOrDefaultAsync(c => c.Id == chatId);
+        }
+
+        public async Task<List<Chat>> GetUserChatsAsync(string userId)
+        {
+            return await context.Chats
+                .Include(c => c.User1)
+                .Include(c => c.User2)
+                .Include(c => c.Messages)
+                .Where(c => (c.UserId1 == userId || c.UserId2 == userId) && c.Messages.Any())
+                .ToListAsync();
         }
 
         public async Task CreateChatAsync(Chat chat)

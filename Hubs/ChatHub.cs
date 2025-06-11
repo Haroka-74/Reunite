@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Reunite.Models;
+using Reunite.Repositories.Implementations;
 using Reunite.Repositories.Interfaces;
 
 namespace Reunite.Hubs
@@ -8,10 +9,12 @@ namespace Reunite.Hubs
     {
 
         private readonly IMessageRepository messageRepository = null!;
+        private readonly IUserRepository userRepository = null!;
 
-        public ChatHub(IMessageRepository messageRepository)
+        public ChatHub(IMessageRepository messageRepository, IUserRepository userRepository)
         {
             this.messageRepository = messageRepository;
+            this.userRepository = userRepository;
         }
 
         public async Task JoinGroup(string chatId)
@@ -31,7 +34,15 @@ namespace Reunite.Hubs
 
             await messageRepository.AddMessageAsync(message);
 
-            await Clients.Group(chatId).SendAsync("ReceiveMessage", chatId, senderId, receiverId, content);
+            await Clients.Group(chatId).SendAsync("ReceiveMessage", senderId, content);
+
+            var user = await userRepository.GetUserAsync(senderId);
+
+            var senderUsername = user!.Username;
+            var lastMessage = content;
+            var lastMessageTime = message.SentAt;
+
+            await Clients.User(receiverId).SendAsync("UpdateChatList", senderId, senderUsername, lastMessage, lastMessageTime);
         }
 
     }
