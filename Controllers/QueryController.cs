@@ -10,7 +10,7 @@ namespace Reunite.Controllers
 {
     [Route("api/query")]
     [ApiController]
-  //  [Authorize]
+    [Authorize]
     public class QueryController(IQueryService queryService, IFacebookService facebookService) : ControllerBase
     {
         [HttpPost("parent")]
