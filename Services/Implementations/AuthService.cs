@@ -45,5 +45,20 @@ namespace Reunite.Services.Implementations
             response.EnsureSuccessStatusCode();
         }
 
+        public async Task UpdatePasswordAsync(UpdatePasswordDTO updatePasswordDTO)
+        {
+            string token = await tokenProviderService.GetTokenAsync();
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var payload = new
+            {
+                password = updatePasswordDTO.NewPassword,
+            };
+             
+            var response = await httpClient.PatchAsJsonAsync($"https://{configuration["ManAuth0API:Domain"]}/api/v2/users/{updatePasswordDTO.Id}", payload);
+            response.EnsureSuccessStatusCode();
+        }
+
     }
 }

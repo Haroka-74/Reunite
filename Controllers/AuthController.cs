@@ -25,5 +25,12 @@ namespace Reunite.Controllers
             return Ok(new { Message = "User updated successfully" });
         }
 
+        [HttpPut("update-password")]
+        public async Task<IActionResult> UpdatePassword(UpdatePasswordDTO updatePasswordDTO)
+        {
+            await service.UpdatePasswordAsync(updatePasswordDTO);
+            return Ok(new { Message = "Password updated successfully" });
+        }
+
     }
 }

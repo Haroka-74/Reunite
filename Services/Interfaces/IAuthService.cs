@@ -6,5 +6,6 @@ namespace Reunite.Services.Interfaces
     {
         Task RegisterAsync(RegisterDTO registerDTO);
         Task UpdateAsync(UpdateDTO updateDTO);
+        Task UpdatePasswordAsync(UpdatePasswordDTO updatePasswordDTO);
     }
 }
