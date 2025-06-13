@@ -26,7 +26,7 @@ namespace Reunite.Repositories.Implementations
             if (existingUser is null)
                 return;
 
-            context.Entry(existingUser).CurrentValues.SetValues(new { newUser.Username, newUser.Email });
+            context.Entry(existingUser).CurrentValues.SetValues(new { newUser.Username, newUser.Email, newUser.FcmToken });
 
             await SaveChangesAsync();
         }

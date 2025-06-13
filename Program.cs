@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +12,12 @@ using Reunite.Repositories.Interfaces;
 using Reunite.Services.Implementations;
 using Reunite.Services.Interfaces;
 
+var serviceAccountPath = Path.Combine(Directory.GetCurrentDirectory(), "Firebase", "serviceAccountKey.json");
+
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile(serviceAccountPath),
+});
 var builder = WebApplication.CreateBuilder(args);
 
 // Add controllers & API explorer
@@ -95,6 +103,7 @@ builder.Services.AddScoped<IFacebookService, FacebookService>();
 builder.Services.AddScoped<IFacebookRepository, FacebookRepository>();
 builder.Services.AddScoped<IDonationService, DonationService>();
 builder.Services.AddScoped<ITokenProviderService, TokenProviderService>();
+builder.Services.AddScoped<IFirebaseNotificationService, FirebaseNotificationService>();
 
 var app = builder.Build();
 

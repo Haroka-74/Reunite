@@ -6,7 +6,7 @@ namespace Reunite.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(IAuthService service) : ControllerBase
+    public class AuthController(IAuthService service, IFirebaseNotificationService notificationService) : ControllerBase
     {
 
         private readonly IAuthService service = service;
@@ -31,6 +31,15 @@ namespace Reunite.Controllers
             await service.UpdatePasswordAsync(updatePasswordDTO);
             return Ok(new { Message = "Password updated successfully" });
         }
+        [HttpPost("update-token")]
 
+        public async Task<IActionResult> UpdateToken([FromBody] UpdateTokenRequestDTO request)
+        {
+            var res = await notificationService.UpdateUserToken(request.UserId, request.Token);
+            if (res)
+                return Ok();
+            else
+                return NotFound();
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Reunite.Models;
-using Reunite.Repositories.Implementations;
 using Reunite.Repositories.Interfaces;
+using Reunite.Services.Interfaces;
 
 namespace Reunite.Hubs
 {
@@ -10,11 +10,13 @@ namespace Reunite.Hubs
 
         private readonly IMessageRepository messageRepository = null!;
         private readonly IUserRepository userRepository = null!;
+        private readonly IFirebaseNotificationService notificationService = null!;
 
-        public ChatHub(IMessageRepository messageRepository, IUserRepository userRepository)
+        public ChatHub(IMessageRepository messageRepository, IUserRepository userRepository, IFirebaseNotificationService notificationService)
         {
             this.messageRepository = messageRepository;
             this.userRepository = userRepository;
+            this.notificationService = notificationService;
         }
 
         public async Task JoinGroup(string chatId)
@@ -36,13 +38,24 @@ namespace Reunite.Hubs
 
             await Clients.Group(chatId).SendAsync("ReceiveMessage", senderId, content);
 
-            var user = await userRepository.GetUserAsync(senderId);
 
+
+            var user = await userRepository.GetUserAsync(senderId);
+            var receiver = await userRepository.GetUserAsync(receiverId);
+            if (!string.IsNullOrEmpty(receiver?.FcmToken))
+            {
+                await notificationService.SendNotification(
+                    receiver.FcmToken,
+                    "New message",
+                    $"{user.Username}: {content}"
+                );
+            }
             var senderUsername = user!.Username;
             var lastMessage = content;
             var lastMessageTime = message.SentAt;
 
             await Clients.User(receiverId).SendAsync("UpdateChatList", senderId, senderUsername, lastMessage, lastMessageTime);
+
         }
 
     }

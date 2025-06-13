@@ -12,8 +12,8 @@ using Reunite.Data;
 namespace Reunite.Migrations
 {
     [DbContext(typeof(ReuniteDbContext))]
-    [Migration("20250609190600_newReunite")]
-    partial class newReunite
+    [Migration("20250612222215_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -141,6 +141,12 @@ namespace Reunite.Migrations
                     b.Property<string>("ChildName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsParent")
                         .HasColumnType("bit");
 
@@ -162,6 +168,9 @@ namespace Reunite.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FcmToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
