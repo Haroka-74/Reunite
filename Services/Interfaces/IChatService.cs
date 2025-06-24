@@ -6,5 +6,6 @@ namespace Reunite.Services.Interfaces
     {
         Task<string> OpenChatBetweenUsersAsync(string userId1, string userId2);
         Task<List<MessageDTO>> GetChatMessages(string chatId);
+        Task<int> GetUnreadMessagesCountAsync(string userId);
     }
 }

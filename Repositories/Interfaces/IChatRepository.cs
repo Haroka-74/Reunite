@@ -8,5 +8,9 @@ namespace Reunite.Repositories.Interfaces
         Task<Chat?> GetChatAsync(string chatId);
         Task<List<Chat>> GetUserChatsAsync(string userId);
         Task CreateChatAsync(Chat chat);
+        Task IncrementUnreadCountAsync(string chatId, string userId);
+        Task MarkMessagesAsReadAsync(string chatId, string userId);
+        Task<int> GetUnreadCountAsync(string chatId, string userId);
+        Task<int> GetTotalUnreadCountAsync(string userId);
     }
 }

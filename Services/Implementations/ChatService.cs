@@ -47,5 +47,9 @@ namespace Reunite.Services.Implementations
             })];
         }
 
+        public Task<int> GetUnreadMessagesCountAsync(string userId)
+        {
+            return chatRepository.GetTotalUnreadCountAsync(userId);
+        }
     }
 }

@@ -7,5 +7,6 @@
         public string ReceiverUsername { get; set; } = null!;
         public string LastMessage { get; set; } = null!;
         public DateTime LastMessageTime { get; set; }
+        public int UnreadCount { get; set; } = 0;
     }
 }

@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Reunite.DTOs;
 using Reunite.DTOs.QueryDTOs;
-using Reunite.Repositories.Interfaces;
 using Reunite.Services.Interfaces;
-using Reunite.Shared;
 
 namespace Reunite.Controllers
 {
@@ -32,6 +29,7 @@ namespace Reunite.Controllers
         {
             var result = await queryService.FindNearest(searchDto, false);
             QueryDTO query = await queryService.AddQueryByFinder(searchDto);
+
             if (result.IsSuccess)
                 return StatusCode(result.StatusCode, result.Data);
 

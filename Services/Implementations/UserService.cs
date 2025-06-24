@@ -24,7 +24,8 @@ namespace Reunite.Services.Implementations
                     ReceiverId = c.UserId1 == userId ? c.UserId2 : c.UserId1,
                     ReceiverUsername = c.UserId1 == userId ? c.User2.Username : c.User1.Username,
                     LastMessage = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault().Content,
-                    LastMessageTime = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault().SentAt
+                    LastMessageTime = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault().SentAt,
+                    UnreadCount = c.UserId1 == userId ? c.UnreadCountUser1 : c.UnreadCountUser2
                 })
                 .OrderByDescending(c => c.LastMessageTime)];
         }

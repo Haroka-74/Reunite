@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Reunite.Models;
+using Reunite.Repositories.Implementations;
 using Reunite.Repositories.Interfaces;
 using Reunite.Services.Interfaces;
 
@@ -11,6 +12,7 @@ namespace Reunite.Hubs
         private readonly IMessageRepository messageRepository = null!;
         private readonly IUserRepository userRepository = null!;
         private readonly IFirebaseNotificationService notificationService = null!;
+        private readonly IChatRepository chatRepository = null!;
 
         public ChatHub(IMessageRepository messageRepository, IUserRepository userRepository, IFirebaseNotificationService notificationService)
         {
@@ -36,6 +38,8 @@ namespace Reunite.Hubs
 
             await messageRepository.AddMessageAsync(message);
 
+            await chatRepository.IncrementUnreadCountAsync(chatId, receiverId);
+
             await Clients.Group(chatId).SendAsync("ReceiveMessage", senderId, content);
 
 
@@ -53,9 +57,22 @@ namespace Reunite.Hubs
             var senderUsername = user!.Username;
             var lastMessage = content;
             var lastMessageTime = message.SentAt;
+            var unreadCount = await chatRepository.GetUnreadCountAsync(chatId, receiverId);
 
-            await Clients.User(receiverId).SendAsync("UpdateChatList", senderId, senderUsername, lastMessage, lastMessageTime);
+            await Clients.User(receiverId).SendAsync("UpdateChatList", senderId, senderUsername, lastMessage, lastMessageTime, unreadCount);
 
+            var totalUnreadCount = await chatRepository.GetTotalUnreadCountAsync(receiverId);
+            await Clients.User(receiverId).SendAsync("UpdateGlobalUnreadCount", totalUnreadCount);
+        }
+
+        public async Task MarkMessagesAsRead(string chatId, string userId)
+        {
+            await chatRepository.MarkMessagesAsReadAsync(chatId, userId);
+
+            await Clients.User(userId).SendAsync("MessagesMarkedAsRead", chatId);
+
+            var totalUnreadCount = await chatRepository.GetTotalUnreadCountAsync(userId);
+            await Clients.User(userId).SendAsync("UpdateGlobalUnreadCount", totalUnreadCount);
         }
 
     }
