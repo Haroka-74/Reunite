@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Reunite.DTOs.QueryDTOs
+namespace Reunite.DTOs.SearchDTOs
 {
     public class FinderSearchDTO : SearchDTO
     {

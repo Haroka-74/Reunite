@@ -25,7 +25,11 @@ namespace Reunite.Controllers
         [HttpPost("chat")]
         public async Task<IActionResult> Chat([FromForm] string userId1, [FromForm] string userId2)
         {
+            if (userId1 == userId2)
+                return BadRequest(new { Message = "You cannot start a chat with yourself." });
+
             string chatId = await chatService.OpenChatBetweenUsersAsync(userId1, userId2);
+
             return Ok(await chatService.GetChatMessages(chatId));
         }
 

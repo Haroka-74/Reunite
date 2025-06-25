@@ -1,4 +1,5 @@
 ﻿using Reunite.DTOs.QueryDTOs;
+using Reunite.DTOs.SearchDTOs;
 namespace Reunite.Services.Interfaces;
 
 public interface IFacebookService

@@ -9,7 +9,7 @@ namespace Reunite.Services.Implementations
     public class AuthService(HttpClient httpClient, IUserRepository userRepository, ITokenProviderService tokenProviderService, IConfiguration configuration) : IAuthService
     {
 
-    public async Task RegisterAsync(RegisterDTO registerDTO)
+        public async Task RegisterAsync(RegisterDTO registerDTO)
         {
             await userRepository.AddUserAsync(new ReuniteUser
             {

@@ -12,8 +12,8 @@ using Reunite.Data;
 namespace Reunite.Migrations
 {
     [DbContext(typeof(ReuniteDbContext))]
-    [Migration("20250612222215_init")]
-    partial class init
+    [Migration("20250625143658_I")]
+    partial class I
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,12 @@ namespace Reunite.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("UnreadCountUser1")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnreadCountUser2")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId1")
                         .IsRequired()

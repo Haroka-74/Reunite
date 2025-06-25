@@ -30,6 +30,12 @@ namespace Reunite.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("UnreadCountUser1")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnreadCountUser2")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserId1")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");

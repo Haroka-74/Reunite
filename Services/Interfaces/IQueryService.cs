@@ -1,4 +1,5 @@
 ﻿using Reunite.DTOs.QueryDTOs;
+using Reunite.DTOs.SearchDTOs;
 using Reunite.Shared;
 
 namespace Reunite.Services.Interfaces

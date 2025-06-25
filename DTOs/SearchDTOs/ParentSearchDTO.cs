@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using Reunite.DTOs.SearchDTOs;
+using System.ComponentModel.DataAnnotations;
 
 namespace Reunite.DTOs.QueryDTOs
 {

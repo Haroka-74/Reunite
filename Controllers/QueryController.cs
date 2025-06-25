@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Reunite.DTOs.QueryDTOs;
+using Reunite.DTOs.SearchDTOs;
 using Reunite.Services.Interfaces;
 
 namespace Reunite.Controllers
@@ -14,6 +15,10 @@ namespace Reunite.Controllers
         public async Task<IActionResult> ParentSearch([FromForm] ParentSearchDTO searchDto)
         {
             var result = await queryService.FindNearest(searchDto, true);
+
+            if(result.StatusCode == 400)
+                return StatusCode(result.StatusCode, new { error = result.Error });
+
             QueryDTO query = await queryService.AddQueryByParent(searchDto);
 
             if (result.IsSuccess)
@@ -28,12 +33,17 @@ namespace Reunite.Controllers
         public async Task<IActionResult> FinderSearch([FromForm] FinderSearchDTO searchDto)
         {
             var result = await queryService.FindNearest(searchDto, false);
+
+            if (result.StatusCode == 400)
+                return StatusCode(result.StatusCode, new { error = result.Error });
+
             QueryDTO query = await queryService.AddQueryByFinder(searchDto);
 
             if (result.IsSuccess)
                 return StatusCode(result.StatusCode, result.Data);
 
             string postUrl = await facebookService.FinderPostToFacebook(searchDto, query.Id);
+
             return StatusCode(result.StatusCode, new { error = result.Error, postUrl });
         }
 

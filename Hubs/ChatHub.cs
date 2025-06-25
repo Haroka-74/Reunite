@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Reunite.Models;
-using Reunite.Repositories.Implementations;
 using Reunite.Repositories.Interfaces;
 using Reunite.Services.Interfaces;
 
@@ -14,11 +13,12 @@ namespace Reunite.Hubs
         private readonly IFirebaseNotificationService notificationService = null!;
         private readonly IChatRepository chatRepository = null!;
 
-        public ChatHub(IMessageRepository messageRepository, IUserRepository userRepository, IFirebaseNotificationService notificationService)
+        public ChatHub(IMessageRepository messageRepository, IUserRepository userRepository, IFirebaseNotificationService notificationService, IChatRepository chatRepository)
         {
             this.messageRepository = messageRepository;
             this.userRepository = userRepository;
             this.notificationService = notificationService;
+            this.chatRepository = chatRepository;
         }
 
         public async Task JoinGroup(string chatId)
@@ -41,8 +41,6 @@ namespace Reunite.Hubs
             await chatRepository.IncrementUnreadCountAsync(chatId, receiverId);
 
             await Clients.Group(chatId).SendAsync("ReceiveMessage", senderId, content);
-
-
 
             var user = await userRepository.GetUserAsync(senderId);
             var receiver = await userRepository.GetUserAsync(receiverId);

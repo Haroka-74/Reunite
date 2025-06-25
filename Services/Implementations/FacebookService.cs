@@ -3,6 +3,7 @@ using Microsoft.Net.Http.Headers;
 using Reunite.DTOs;
 using Reunite.DTOs.FacebookDTOs;
 using Reunite.DTOs.QueryDTOs;
+using Reunite.DTOs.SearchDTOs;
 using Reunite.Models;
 using Reunite.Repositories.Interfaces;
 using Reunite.Services.Interfaces;

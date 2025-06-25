@@ -1,4 +1,5 @@
 ﻿using Reunite.DTOs.QueryDTOs;
+using Reunite.DTOs.SearchDTOs;
 using System.Net.Http.Headers;
 
 namespace Reunite.Helpers

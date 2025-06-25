@@ -5,6 +5,7 @@ using Reunite.Repositories.Interfaces;
 using Reunite.Services.Interfaces;
 using Reunite.Shared;
 using Reunite.Models;
+using Reunite.DTOs.SearchDTOs;
 
 namespace Reunite.Services.Implementations
 {
@@ -22,8 +23,12 @@ namespace Reunite.Services.Implementations
             string URL = $"http://{configuration["AI:IP"]}:{configuration["AI:Port"]}/childs/search";
 
             var response = await httpClient.PostAsync(URL, content);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                return Result<FindNearestDTO>.Failure("Invalid picture: No faces detected in the image", 400);
+
             if (!response.IsSuccessStatusCode)
-                return Result<FindNearestDTO>.Failure("No similar images", 201);
+                return Result<FindNearestDTO>.Failure("No similar images, we add your child image into database", 201);
 
             var json = await response.Content.ReadFromJsonAsync<JsonElement>();
 
@@ -32,6 +37,9 @@ namespace Reunite.Services.Implementations
             string? image = json.GetProperty("image").GetString();
 
             var query = await queryRepository.GetQueryAsync(id!);
+
+            if (query!.User.Id == searchDTO.UserId)
+                return Result<FindNearestDTO>.Failure("You cannot parent and finder in the same time", 400);
 
             return Result<FindNearestDTO>.Success(new FindNearestDTO
             {
@@ -51,8 +59,7 @@ namespace Reunite.Services.Implementations
         public async Task<QueryDTO> AddQueryByParent(ParentSearchDTO searchDto)
         {
             var imageId = Guid.NewGuid().ToString();
-            await UploadImageToAIService(searchDto.Image, true, imageId);
-            var result = await GetImage(imageId);
+            string? imageBase64 = await UploadImageToAIService(searchDto.Image, true, imageId);
 
             var query = await queryRepository.AddQueryAsync(new Query
             {
@@ -60,7 +67,7 @@ namespace Reunite.Services.Implementations
                 ChildName = searchDto.ChildName,
                 ChildAge = searchDto.ChildAge,
                 Id = imageId,
-                ChildImage = result.Data,
+                ChildImage = imageBase64!,
                 IsParent = true
             });
             return MapToQueryDto(query);
@@ -70,8 +77,7 @@ namespace Reunite.Services.Implementations
         public async Task<QueryDTO> AddQueryByFinder(FinderSearchDTO searchDto)
         {
             var imageId = Guid.NewGuid().ToString();
-            await UploadImageToAIService(searchDto.Image, false, imageId);
-            var result = await GetImage(imageId);
+            string? imageBase64 = await UploadImageToAIService(searchDto.Image, false, imageId);
 
             Location location = new Location()
                 { Id = Guid.NewGuid().ToString(), Latitude = searchDto.Latitude, Longitude = searchDto.Longitude };
@@ -81,7 +87,7 @@ namespace Reunite.Services.Implementations
                 UserId = searchDto.UserId,
                 Id = imageId,
                 Location = location,
-                ChildImage = result.Data,
+                ChildImage = imageBase64!,
                 IsParent = false
             });
             return MapToQueryDto(query);
@@ -121,29 +127,24 @@ namespace Reunite.Services.Implementations
             return Result<QueryDTO>.Success(MapToQueryDto(query), 200);
         }
 
-        private async Task UploadImageToAIService(IFormFile image, bool isParent, string imageId)
+        private async Task<string?> UploadImageToAIService(IFormFile image, bool isParent, string imageId)
         {
             var content = AIServiceHelper.CreateMultipartContent(image, isParent);
             content.Add(new StringContent(imageId), "id");
 
-            await httpClient.PostAsync(
-                $"http://{configuration["AI:IP"]}:{configuration["AI:Port"]}/childs/",
-                content);
+            var response = await httpClient.PostAsync($"http://{configuration["AI:IP"]}:{configuration["AI:Port"]}/childs/", content);
+
+            response.EnsureSuccessStatusCode();
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            var jsonObject = JsonSerializer.Deserialize<JsonElement>(jsonString);
+            string? imageBase64 = jsonObject.GetProperty("image").GetString();
+
+            return imageBase64;
         }
 
-        private async Task<Result<string>> GetImage(string imageId)
-        {
-            string URL = $"http://{configuration["AI:IP"]}:{configuration["AI:Port"]}/childs/{imageId}";
-            var response = await httpClient.GetAsync(URL);
-            if (!response.IsSuccessStatusCode)
-                return Result<string>.Failure("No similar images", 404);
-
-            var json = await response.Content.ReadFromJsonAsync<JsonElement>();
-            string? image = json.GetProperty("image").GetString();
-            return Result<string>.Success(image, 200);
-        }
-
-        private QueryDTO MapToQueryDto(Query query)
+        private static QueryDTO MapToQueryDto(Query query)
         {
             return new QueryDTO()
             {
